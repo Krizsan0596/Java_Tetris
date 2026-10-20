@@ -1,8 +1,10 @@
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
 public class HighScoreManager {
     private static final int MAX_SCORES = 10;
+    private static FileManager fm = new FileManager();
     private LinkedList<Score> scores = new LinkedList<>();
 
     public boolean add(Score score) {
@@ -26,5 +28,9 @@ public class HighScoreManager {
         }
 
         return true;
+    }
+
+    public HighScoreManager() throws ClassCastException, ClassNotFoundException, IOException {
+        scores = fm.load();
     }
 }
