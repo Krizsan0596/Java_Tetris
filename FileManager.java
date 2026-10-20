@@ -1,5 +1,7 @@
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
@@ -19,7 +21,7 @@ public class FileManager {
         System.out.println("Scores saved!");
     }
 
-    public LinkedList<Score> load() {
+    public LinkedList<Score> load() throws ClassCastException, ClassNotFoundException, IOException {
         try (ObjectInputStream in = new ObjectInputStream(
                 new FileInputStream(filename))) {
             Object obj = in.readObject();
@@ -40,12 +42,15 @@ public class FileManager {
 
             System.out.println("Scores loaded!");
             return scores;
-        } catch (ClassCastException e) {
+        } catch (ClassCastException | ClassNotFoundException e) {
             System.out.println("Malformed save file.");
+            throw e;
+        } catch (FileNotFoundException e) {
+            System.out.println("No saved data found.");
             return new LinkedList<>();
         } catch (Exception e) {
             System.out.println("Error during file read: " + e.getMessage());
-            return new LinkedList<>();
+            throw e;
         }
     }
 }
