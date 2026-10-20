@@ -12,6 +12,18 @@ public class Score implements Comparable<Score>, Serializable{
         this.time = LocalDateTime.now();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
     @Override 
     public int compareTo(Score other) {
         return Integer.compare(this.score, other.score);
