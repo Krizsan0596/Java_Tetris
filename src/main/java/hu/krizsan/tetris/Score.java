@@ -1,3 +1,5 @@
+package hu.krizsan.tetris;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 

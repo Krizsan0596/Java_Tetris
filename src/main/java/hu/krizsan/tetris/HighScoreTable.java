@@ -1,3 +1,5 @@
+package hu.krizsan.tetris;
+
 import java.time.LocalDateTime;
 
 import javax.swing.table.AbstractTableModel;
