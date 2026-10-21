@@ -4,7 +4,7 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-public class NextPiecePanel extends JPanel {
+public final class NextPiecePanel extends JPanel {
     public NextPiecePanel() {
         setPreferredSize(new Dimension(160, 180));
         setBackground(new Color(30, 35, 40));

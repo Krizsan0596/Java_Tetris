@@ -2,14 +2,15 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-public class HighScoreManager {
+public final class HighScoreManager {
     private static final int MAX_SCORES = 10;
     private static FileManager fm = new FileManager();
-    private HighScoreTable hst = new HighScoreTable(this);
+    private final HighScoreTable hst;
     public LinkedList<Score> scores = new LinkedList<>();
 
     public HighScoreManager() throws ClassCastException, ClassNotFoundException, IOException {
         scores = fm.load();
+        hst = new HighScoreTable(this);
     }
 
     public HighScoreTable getTable() {
