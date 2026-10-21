@@ -2,10 +2,20 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-public class HighScoreManager {
+public final class HighScoreManager {
     private static final int MAX_SCORES = 10;
     private static FileManager fm = new FileManager();
-    private LinkedList<Score> scores = new LinkedList<>();
+    private final HighScoreTable hst;
+    public LinkedList<Score> scores = new LinkedList<>();
+
+    public HighScoreManager() throws ClassCastException, ClassNotFoundException, IOException {
+        scores = fm.load();
+        hst = new HighScoreTable(this);
+    }
+
+    public HighScoreTable getTable() {
+        return hst;
+    }
 
     public boolean add(Score score) {
         ListIterator<Score> it = this.scores.listIterator();
@@ -27,10 +37,7 @@ public class HighScoreManager {
             scores.removeLast();
         }
 
+        hst.fireTableDataChanged();
         return true;
-    }
-
-    public HighScoreManager() throws ClassCastException, ClassNotFoundException, IOException {
-        scores = fm.load();
     }
 }
