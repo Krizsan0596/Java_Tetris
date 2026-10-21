@@ -4,7 +4,11 @@ import javax.swing.table.AbstractTableModel;
 
 public class HighScoreTable extends AbstractTableModel {
     private final String[] columns = { "Name", "Score", "Date" };
-    private HighScoreManager hsm;
+    private final HighScoreManager hsm;
+
+    public HighScoreTable(HighScoreManager hsm) {
+        this.hsm = hsm;
+    }
 
     @Override 
     public int getColumnCount() {
@@ -14,6 +18,11 @@ public class HighScoreTable extends AbstractTableModel {
     @Override
     public int getRowCount() {
         return hsm.scores.size();
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        return columns[column];
     }
 
     @Override 

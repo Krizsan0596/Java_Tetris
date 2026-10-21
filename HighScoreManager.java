@@ -5,10 +5,15 @@ import java.util.ListIterator;
 public class HighScoreManager {
     private static final int MAX_SCORES = 10;
     private static FileManager fm = new FileManager();
+    private HighScoreTable hst = new HighScoreTable(this);
     public LinkedList<Score> scores = new LinkedList<>();
 
     public HighScoreManager() throws ClassCastException, ClassNotFoundException, IOException {
         scores = fm.load();
+    }
+
+    public HighScoreTable getTable() {
+        return hst;
     }
 
     public boolean add(Score score) {
@@ -31,6 +36,7 @@ public class HighScoreManager {
             scores.removeLast();
         }
 
+        hst.fireTableDataChanged();
         return true;
     }
 }
