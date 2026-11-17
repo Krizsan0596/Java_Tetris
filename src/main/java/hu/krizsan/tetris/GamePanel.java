@@ -7,20 +7,30 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 public final class GamePanel extends JPanel {
-    private static final int WIDTH = 10;
-    private static final int HEIGHT = 20;
     private static final int BLOCK_SIZE = 25;
 
-    public GamePanel() {
-        setPreferredSize(new Dimension(BLOCK_SIZE * WIDTH, BLOCK_SIZE * HEIGHT));
-        setBackground(new Color(48, 52, 70));
+    private final Board board;
+
+    public GamePanel(Board board) {
+        this.board = board;
+        setPreferredSize(new Dimension(BLOCK_SIZE * Board.WIDTH, BLOCK_SIZE * Board.HEIGHT));
+        setBackground(Board.BACKGROUND_COLOR);
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
     @Override 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.setColor(Color.WHITE);
-        g.drawString("Game", 20, 25);
+        Color[][] colors = board.renderPiece();
+        for (int x = 0; x < Board.WIDTH; x++) {
+            for (int y = 0; y < Board.HEIGHT; y++) {
+                g.setColor(colors[x][y]);
+                g.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            }
+        }
     }
 }
