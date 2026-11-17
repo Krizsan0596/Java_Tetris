@@ -19,13 +19,21 @@ public class Board {
         }
     }
 
-    public void spawnPiece(PieceType piece) {
+    public boolean spawnPiece(PieceType piece) {
         int spawnY = 0;
         for (int[] offset : piece.getOffsets()) {
             spawnY = Math.max(spawnY, -offset[1]);
         }
+        for (int[] offset : piece.getOffsets()) {
+            int x = WIDTH / 2 + offset[0];
+            int y = spawnY + offset[1];
+            if (!BACKGROUND_COLOR.equals(colors[x][y])) {
+                return false;
+            }
+        }
         currentPiece = piece;
         position.setLocation(WIDTH / 2, spawnY);
+        return true;
     }
 
     public Color[][] renderPiece() {
