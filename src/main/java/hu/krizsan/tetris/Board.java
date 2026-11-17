@@ -20,6 +20,15 @@ public class Board {
     }
 
     public boolean spawnPiece(PieceType piece) {
+        if (currentPiece != null) {
+            for (int[] offset : currentPiece.getOffsets()) {
+                int x = position.x + offset[0];
+                int y = position.y + offset[1];
+                colors[x][y] = currentPiece.getColor();
+            }
+            currentPiece = null;
+        }
+
         int spawnY = 0;
         for (int[] offset : piece.getOffsets()) {
             spawnY = Math.max(spawnY, -offset[1]);
