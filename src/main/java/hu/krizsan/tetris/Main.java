@@ -31,6 +31,9 @@ public class Main {
                 NextPiecePanel nextPiecePanel = new NextPiecePanel();
                 sidePanel.add(nextPiecePanel, BorderLayout.CENTER);
 
+                GameManager gameManager = new GameManager(nextPiecePanel, gamePanel);
+                gameManager.newPiece();
+
                 JButton quitButton = new JButton("Quit");
                 quitButton.addActionListener(event -> 
                         frame.dispatchEvent(

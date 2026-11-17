@@ -7,9 +7,13 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 public final class GamePanel extends JPanel {
+    private static final int WIDTH = 10;
+    private static final int HEIGHT = 20;
+    private static final int BLOCK_SIZE = 25;
+
     public GamePanel() {
-        setPreferredSize(new Dimension(500, 450));
-        setBackground(new Color(30, 35, 40));
+        setPreferredSize(new Dimension(BLOCK_SIZE * WIDTH, BLOCK_SIZE * HEIGHT));
+        setBackground(new Color(48, 52, 70));
     }
 
     @Override 
