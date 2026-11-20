@@ -1,5 +1,7 @@
 package hu.krizsan.tetris;
 
+import javax.swing.Timer;
+
 public class GameManager {
     private final PieceBag pieceBag = new PieceBag();
     private PieceType nextPiece = pieceBag.pop();
@@ -7,14 +9,18 @@ public class GameManager {
     private GamePanel gamePanel;
     private final Board board;
     private boolean running;
+    private final Timer timer;
 
     public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board) {
         this.gamePanel = gamePanel;
         this.nextPiecePanel = nextPiecePanel;
         this.board = board;
+        this.timer = new Timer(calculateFallTime(1), e -> update());
     }
 
     public void start() {
+        timer.setDelay(calculateFallTime(1));
+        timer.setInitialDelay(calculateFallTime(1));
         board.reset();
         pieceBag.reset();
         nextPiece = pieceBag.pop();
@@ -22,12 +28,23 @@ public class GameManager {
         newPiece();
     }
 
+    public void update() {
+        board.down();
+        gamePanel.repaint();
+    }
+
     public boolean isRunning() {
         return running;
     }
 
+    public int calculateFallTime(int level) {
+        double seconds = Math.pow(0.8 - ((level - 1) * 0.007), level - 1);
+        return (int) Math.round(seconds * 1000);
+    }
+
     public void newPiece() {
         if (board.spawnPiece(nextPiece)) {
+            timer.restart();
             gamePanel.repaint();
             nextPiece = pieceBag.pop();
             nextPiecePanel.setPiece(nextPiece);
