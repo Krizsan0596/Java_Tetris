@@ -6,6 +6,7 @@ public class GameManager {
     private NextPiecePanel nextPiecePanel;
     private GamePanel gamePanel;
     private final Board board;
+    private boolean running;
 
     public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board) {
         this.gamePanel = gamePanel;
@@ -13,10 +14,25 @@ public class GameManager {
         this.board = board;
     }
 
-    public void newPiece() {
-        board.spawnPiece(nextPiece);
-        gamePanel.repaint();
+    public void start() {
+        board.reset();
+        pieceBag.reset();
         nextPiece = pieceBag.pop();
-        nextPiecePanel.setPiece(nextPiece);
+        running = true;
+        newPiece();
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void newPiece() {
+        if (board.spawnPiece(nextPiece)) {
+            gamePanel.repaint();
+            nextPiece = pieceBag.pop();
+            nextPiecePanel.setPiece(nextPiece);
+        } else {
+            running = false;
+        }
     }
 }

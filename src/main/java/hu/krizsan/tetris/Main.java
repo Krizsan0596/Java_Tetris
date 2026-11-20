@@ -33,7 +33,7 @@ public class Main {
                 sidePanel.add(nextPiecePanel, BorderLayout.CENTER);
 
                 GameManager gameManager = new GameManager(nextPiecePanel, gamePanel, board);
-                gameManager.newPiece();
+                gameManager.start();
 
                 JButton quitButton = new JButton("Quit");
                 quitButton.addActionListener(event -> 

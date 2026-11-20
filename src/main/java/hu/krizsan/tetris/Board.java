@@ -14,9 +14,15 @@ public class Board {
     private final Point position = new Point();
 
     public Board() {
+        reset();
+    }
+
+    public void reset() {
         for (Color[] column : colors) {
             Arrays.fill(column, BACKGROUND_COLOR);
         }
+        currentPiece = null;
+        position.setLocation(0, 0);
     }
 
     public boolean spawnPiece(PieceType piece) {

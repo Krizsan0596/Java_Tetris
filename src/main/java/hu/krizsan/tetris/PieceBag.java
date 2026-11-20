@@ -12,6 +12,11 @@ public class PieceBag {
         refill();
     }
 
+    public void reset() {
+        pieces.clear();
+        refill();
+    }
+
     private void refill() {
         pieces.addAll(Arrays.asList(PieceType.values()));
         Collections.shuffle(pieces);
