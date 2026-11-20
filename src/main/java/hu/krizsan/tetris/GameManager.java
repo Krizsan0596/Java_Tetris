@@ -1,5 +1,10 @@
 package hu.krizsan.tetris;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 public class GameManager {
@@ -16,6 +21,23 @@ public class GameManager {
         this.nextPiecePanel = nextPiecePanel;
         this.board = board;
         this.timer = new Timer(calculateFallTime(1), e -> update());
+
+        gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "left");
+        gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "right");
+        gamePanel.getGameActionMap().put("left", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                board.left();
+                gamePanel.repaint();
+            }
+        });
+        gamePanel.getGameActionMap().put("right", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                board.right();
+                gamePanel.repaint();
+            }
+        });
     }
 
     public void start() {
