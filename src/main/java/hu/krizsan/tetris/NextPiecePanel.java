@@ -7,9 +7,16 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 public final class NextPiecePanel extends JPanel {
+    private PieceType piece;
+
     public NextPiecePanel() {
         setPreferredSize(new Dimension(160, 180));
-        setBackground(new Color(30, 35, 40));
+        setBackground(new Color(48, 52, 70));
+    }
+
+    public void setPiece(PieceType piece) {
+        this.piece = piece;
+        repaint();
     }
 
     @Override 
@@ -19,10 +26,13 @@ public final class NextPiecePanel extends JPanel {
         g.setColor(Color.WHITE);
         g.drawString("Next piece", 10, 20);
 
-        g.setColor(Color.YELLOW);
-        g.fillRect(45, 50, 25, 25);
-        g.fillRect(45, 75, 25, 25);
-        g.fillRect(70, 50, 25, 25);
-        g.fillRect(70, 75, 25, 25);
+        if (piece == null) {
+            return;
+        }
+
+        g.setColor(piece.getColor());
+        for (int[] offset : piece.getOffsets()) {
+            g.fillRect(65 + offset[0] * 25, 75 + offset[1] * 25, 25, 25);
+        }
     }
 }

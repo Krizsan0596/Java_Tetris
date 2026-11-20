@@ -21,7 +21,8 @@ public class Main {
                 frame.setLayout(new BorderLayout(8, 8));
 
                 // Main game display, to be owned by GameManager object
-                GamePanel gamePanel = new GamePanel();
+                Board board = new Board();
+                GamePanel gamePanel = new GamePanel(board);
                 frame.add(gamePanel, BorderLayout.CENTER);
                 
                 JPanel sidePanel = new JPanel(new BorderLayout(5, 5));
@@ -30,6 +31,9 @@ public class Main {
                 // Next piece display, to be owned by GameManager object
                 NextPiecePanel nextPiecePanel = new NextPiecePanel();
                 sidePanel.add(nextPiecePanel, BorderLayout.CENTER);
+
+                GameManager gameManager = new GameManager(nextPiecePanel, gamePanel, board);
+                gameManager.start();
 
                 JButton quitButton = new JButton("Quit");
                 quitButton.addActionListener(event -> 
