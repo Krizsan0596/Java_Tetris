@@ -51,6 +51,36 @@ public class Board {
         return true;
     }
 
+    public boolean left() {
+        return shift(-1, 0);
+    }
+
+    public boolean right() {
+        return shift(1, 0);
+    }
+
+    public boolean down() {
+        return shift(0, 1);
+    }
+
+    private boolean shift(int dx, int dy) {
+        if (currentPiece == null) {
+            return false;
+        }
+
+        for (int[] offset : currentPiece.getOffsets()) {
+            int x = position.x + offset[0] + dx;
+            int y = position.y + offset[1] + dy;
+            if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT
+                    || !BACKGROUND_COLOR.equals(colors[x][y])) {
+                return false;
+            }
+        }
+
+        position.translate(dx, dy);
+        return true;
+    }
+
     public Color[][] renderPiece() {
         Color[][] renderedColors = new Color[WIDTH][];
         for (int x = 0; x < WIDTH; x++) {
