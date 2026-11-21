@@ -7,14 +7,14 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 public final class NextPiecePanel extends JPanel {
-    private PieceType piece;
+    private Piece piece;
 
     public NextPiecePanel() {
         setPreferredSize(new Dimension(160, 180));
         setBackground(new Color(48, 52, 70));
     }
 
-    public void setPiece(PieceType piece) {
+    public void setPiece(Piece piece) {
         this.piece = piece;
         repaint();
     }
