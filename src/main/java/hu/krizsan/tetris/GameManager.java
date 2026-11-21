@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
@@ -15,6 +16,7 @@ public class GameManager {
     private GamePanel gamePanel;
     private final Board board;
     private final JLabel scoreLabel;
+    private final HighScoreManager highScoreManager;
     private boolean running;
     private boolean softDropping;
     private boolean lastTetris;
@@ -25,11 +27,12 @@ public class GameManager {
 
     private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
 
-    public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board, JLabel scoreLabel) {
+    public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board, JLabel scoreLabel, HighScoreManager highScoreManager) {
         this.gamePanel = gamePanel;
         this.nextPiecePanel = nextPiecePanel;
         this.board = board;
         this.scoreLabel = scoreLabel;
+        this.highScoreManager = highScoreManager;
         this.timer = new Timer(calculateFallTime(1), e -> update());
 
         keybindsSetup();
@@ -124,10 +127,30 @@ public class GameManager {
             nextPiece = new Piece(pieceBag.pop());
             nextPiecePanel.setPiece(nextPiece);
         } else {
-            running = false;
-            timer.stop();
-            gamePanel.repaint();
+            gameOver();
         }
+    }
+
+    public void gameOver() {
+        running = false;
+        timer.stop();
+        gamePanel.repaint();
+
+        String name = "";
+        while (name.isEmpty()) {
+            name = JOptionPane.showInputDialog(
+                    gamePanel,
+                    "Game over!\n Score: " + score + "\nEnter your name to save your score:",
+                    "Game Over",
+                    JOptionPane.QUESTION_MESSAGE
+                    );
+            if (name == null) {
+                return;
+            }
+        }
+
+        Score highScore = new Score(name, score);
+        highScoreManager.add(highScore);
     }
 
     private void keybindsSetup() {

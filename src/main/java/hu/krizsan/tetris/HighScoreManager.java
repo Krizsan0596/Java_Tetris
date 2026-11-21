@@ -39,6 +39,7 @@ public final class HighScoreManager {
             scores.removeLast();
         }
 
+        fm.save(scores);
         hst.fireTableDataChanged();
         return true;
     }
