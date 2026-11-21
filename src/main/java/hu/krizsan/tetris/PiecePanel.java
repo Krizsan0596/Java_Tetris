@@ -6,10 +6,10 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-public final class NextPiecePanel extends JPanel {
+public final class PiecePanel extends JPanel {
     private Piece piece;
 
-    public NextPiecePanel() {
+    public PiecePanel() {
         setPreferredSize(new Dimension(160, 180));
         setBackground(new Color(48, 52, 70));
     }

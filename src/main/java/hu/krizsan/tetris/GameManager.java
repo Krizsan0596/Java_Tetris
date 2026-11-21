@@ -15,7 +15,8 @@ public class GameManager {
     private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
 
     private final Board board;
-    private NextPiecePanel nextPiecePanel;
+    private PiecePanel nextPiecePanel;
+    private PiecePanel heldPiecePanel;
     private GamePanel gamePanel;
     private final JLabel scoreLabel;
     private final HighScoreManager highScoreManager;
@@ -37,9 +38,10 @@ public class GameManager {
     private boolean lastTetris;
     private int combo = -1;
 
-    public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board, JLabel scoreLabel, HighScoreManager highScoreManager) {
+    public GameManager(PiecePanel nextPiecePanel, PiecePanel heldPiecePanel, GamePanel gamePanel, Board board, JLabel scoreLabel, HighScoreManager highScoreManager) {
         this.gamePanel = gamePanel;
         this.nextPiecePanel = nextPiecePanel;
+        this.heldPiecePanel = heldPiecePanel;
         this.board = board;
         this.scoreLabel = scoreLabel;
         this.highScoreManager = highScoreManager;
@@ -62,6 +64,7 @@ public class GameManager {
         lastTetris = false;
         softDropping = false;
         holdPiece = null;
+        heldPiecePanel.setPiece(null);
         holdAvailable = true;
         pieceBag.reset();
 
@@ -92,6 +95,7 @@ public class GameManager {
         boolean emptyHold = holdPiece == null;
         Piece pieceToSpawn = emptyHold ? nextPiece : holdPiece;
         holdPiece = board.getCurrentPiece();
+        heldPiecePanel.setPiece(holdPiece);
 
         if (!board.spawnPiece(pieceToSpawn)) {
             gameOver();

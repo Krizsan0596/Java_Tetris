@@ -2,6 +2,7 @@ package hu.krizsan.tetris;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
@@ -37,14 +38,27 @@ public class Main {
                 JPanel sidePanel = new JPanel(new BorderLayout(5, 8));
                 sidePanel.setPreferredSize(new Dimension(170, 0));
 
+                JPanel previews = new JPanel(new GridLayout(2, 1, 0, 8));
+
+                // Held piece display, to be owned by GameManager object
+                JPanel heldPieceContainer = new JPanel(new BorderLayout(0, 8));
+                JLabel heldPieceLabel = new JLabel("Held piece", JLabel.CENTER);
+                heldPieceContainer.add(heldPieceLabel, BorderLayout.NORTH);
+                PiecePanel heldPiecePanel = new PiecePanel();
+                heldPieceContainer.add(heldPiecePanel, BorderLayout.CENTER);
+                previews.add(heldPieceContainer);
+
                 // Next piece display, to be owned by GameManager object
+                JPanel nextPieceContainer = new JPanel(new BorderLayout(0, 8));
                 JLabel nextPieceLabel = new JLabel("Next piece", JLabel.CENTER);
-                sidePanel.add(nextPieceLabel, BorderLayout.NORTH);
-                NextPiecePanel nextPiecePanel = new NextPiecePanel();
-                sidePanel.add(nextPiecePanel, BorderLayout.CENTER);
+                nextPieceContainer.add(nextPieceLabel, BorderLayout.NORTH);
+                PiecePanel nextPiecePanel = new PiecePanel();
+                nextPieceContainer.add(nextPiecePanel, BorderLayout.CENTER);
+                previews.add(nextPieceContainer);
+                sidePanel.add(previews, BorderLayout.CENTER);
 
                 HighScoreManager hsm = new HighScoreManager();
-                GameManager gameManager = new GameManager(nextPiecePanel, gamePanel, board, scoreLabel, hsm);
+                GameManager gameManager = new GameManager(nextPiecePanel, heldPiecePanel, gamePanel, board, scoreLabel, hsm);
                 gameManager.start();
 
                 JButton quitButton = new JButton("Quit");
