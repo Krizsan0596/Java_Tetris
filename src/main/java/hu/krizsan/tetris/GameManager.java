@@ -25,9 +25,11 @@ public class GameManager {
 
     private final PieceBag pieceBag = new PieceBag();
     private Piece nextPiece = new Piece(pieceBag.pop());
+    private Piece holdPiece = null;
 
     private boolean running;
     private boolean softDropping;
+    private boolean holdAvailable = true;
     private int resets = 0;
 
     private int score = 0;
@@ -41,6 +43,7 @@ public class GameManager {
         this.board = board;
         this.scoreLabel = scoreLabel;
         this.highScoreManager = highScoreManager;
+
         this.timer = new Timer(calculateFallTime(1), e -> update());
         this.lockTimer = new Timer(LOCK_DELAY, e -> newPiece());
         this.lockTimer.setRepeats(false);
@@ -54,11 +57,12 @@ public class GameManager {
         timer.setInitialDelay(calculateFallTime(1));
         board.reset();
         score = 0;
+        updateScoreLabel();
         rows_cleared = 0;
         lastTetris = false;
-        updateScoreLabel();
         softDropping = false;
         pieceBag.reset();
+
         nextPiece = new Piece(pieceBag.pop());
         running = true;
         newPiece();
@@ -76,6 +80,27 @@ public class GameManager {
         }
         gamePanel.repaint();
         updateScoreLabel();
+    }
+
+    public void holdPiece() {
+        boolean emptyHold = holdPiece == null;
+        Piece pieceToSpawn = emptyHold ? nextPiece : holdPiece;
+        holdPiece = board.getCurrentPiece();
+
+        if (!board.spawnPiece(pieceToSpawn)) {
+            gameOver();
+            return;
+        }
+
+        if (emptyHold) {
+            nextPiece = new Piece(pieceBag.pop());
+            nextPiecePanel.setPiece(nextPiece);
+        }
+
+        lockTimer.stop();
+        resets = 0;
+        updateTimer();
+        gamePanel.repaint();
     }
 
     public boolean isRunning() {
@@ -98,6 +123,7 @@ public class GameManager {
         lockTimer.stop();
         resets = 0;
         board.lock();
+
         int cleared = board.clearRows();
         if (cleared == 0) {
             combo = -1;
@@ -105,15 +131,23 @@ public class GameManager {
             combo++;
             score += (rows_cleared / 10 + 1) * combo * 50;
         }
+
         score += (rows_cleared / 10 + 1) * scores[cleared];
+
         if (cleared == 4 && lastTetris) {
             score += (rows_cleared / 10 + 1) * scores[cleared] / 2;
         }
         if (cleared > 0) {
             lastTetris = cleared == 4;
         }
+
         updateScoreLabel();
         rows_cleared += cleared;
+
+        if (!holdAvailable) {
+            holdAvailable = true;
+        }
+
         if (board.spawnPiece(nextPiece)) {
             updateTimer();
 
@@ -152,6 +186,7 @@ public class GameManager {
         if (timer.getDelay() == delay) {
             return;
         }
+
         timer.setDelay(delay);
         timer.setInitialDelay(delay);
         if (timer.isRunning()) {
@@ -183,6 +218,7 @@ public class GameManager {
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "hardDrop");
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0), "cw");
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0), "ccw");
+
         gamePanel.getGameActionMap().put("cw", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
