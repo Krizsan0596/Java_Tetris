@@ -10,14 +10,14 @@ public class Board {
     public static final Color BACKGROUND_COLOR = new Color(48, 52, 70);
 
     private final Color[][] colors = new Color[WIDTH][HEIGHT];
-    private PieceType currentPiece;
+    private Piece currentPiece;
     private final Point position = new Point();
 
     public Board() {
         reset();
     }
 
-    public PieceType getCurrentPiece() {
+    public Piece getCurrentPiece() {
         return currentPiece;
     }
 
@@ -29,7 +29,7 @@ public class Board {
         position.setLocation(0, 0);
     }
 
-    public boolean spawnPiece(PieceType piece) {
+    public boolean spawnPiece(Piece piece) {
         if (currentPiece != null) {
             for (int[] offset : currentPiece.getOffsets()) {
                 int x = position.x + offset[0];
@@ -67,6 +67,28 @@ public class Board {
         return shift(0, 1);
     }
 
+    public boolean cw() {
+        if (currentPiece == null) {
+            return false;
+        }
+        return rotate(currentPiece.cw());
+    }
+
+    public boolean ccw() {
+        if (currentPiece == null) {
+            return false;
+        }
+        return rotate(currentPiece.ccw());
+    }
+
+    private boolean rotate(Piece rotated) {
+        if (hasCollision(rotated, 0, 0)) {
+            return false;
+        }
+        currentPiece = rotated;
+        return true;
+    }
+
     private boolean shift(int dx, int dy) {
         if (currentPiece == null) {
             return false;
@@ -81,7 +103,11 @@ public class Board {
     }
 
     public boolean hasCollision(int dx, int dy) {
-        for (int[] offset : currentPiece.getOffsets()) {
+        return hasCollision(currentPiece, dx, dy);
+    }
+
+    private boolean hasCollision(Piece piece, int dx, int dy) {
+        for (int[] offset : piece.getOffsets()) {
             int x = position.x + offset[0] + dx;
             int y = position.y + offset[1] + dy;
             if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT

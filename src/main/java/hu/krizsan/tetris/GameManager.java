@@ -9,7 +9,7 @@ import javax.swing.Timer;
 
 public class GameManager {
     private final PieceBag pieceBag = new PieceBag();
-    private PieceType nextPiece = pieceBag.pop();
+    private Piece nextPiece = new Piece(pieceBag.pop());
     private NextPiecePanel nextPiecePanel;
     private GamePanel gamePanel;
     private final Board board;
@@ -31,6 +31,22 @@ public class GameManager {
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "speedUp");
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), "slowDown");
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "hardDrop");
+        gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0), "cw");
+        gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0), "ccw");
+        gamePanel.getGameActionMap().put("cw", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                board.cw();
+                gamePanel.repaint();
+            }
+        });
+        gamePanel.getGameActionMap().put("ccw", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                board.ccw();
+                gamePanel.repaint();
+            }
+        });
         gamePanel.getGameActionMap().put("left", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -85,7 +101,7 @@ public class GameManager {
         timer.setInitialDelay(calculateFallTime(1));
         board.reset();
         pieceBag.reset();
-        nextPiece = pieceBag.pop();
+        nextPiece = new Piece(pieceBag.pop());
         running = true;
         newPiece();
     }
@@ -108,7 +124,7 @@ public class GameManager {
         if (board.spawnPiece(nextPiece)) {
             timer.restart();
             gamePanel.repaint();
-            nextPiece = pieceBag.pop();
+            nextPiece = new Piece(pieceBag.pop());
             nextPiecePanel.setPiece(nextPiece);
         } else {
             running = false;
