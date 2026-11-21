@@ -10,6 +10,7 @@ public class Board {
     public static final Color BACKGROUND_COLOR = new Color(48, 52, 70);
 
     private final Color[][] colors = new Color[HEIGHT][WIDTH];
+
     private Piece currentPiece;
     private final Point position = new Point();
 

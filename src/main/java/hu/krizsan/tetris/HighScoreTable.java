@@ -6,6 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class HighScoreTable extends AbstractTableModel {
     private final String[] columns = { "Name", "Score", "Date" };
+
     private final HighScoreManager hsm;
 
     public HighScoreTable(HighScoreManager hsm) {
