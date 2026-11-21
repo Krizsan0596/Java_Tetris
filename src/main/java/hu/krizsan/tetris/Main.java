@@ -41,20 +41,12 @@ public class Main {
                 JPanel previews = new JPanel(new GridLayout(2, 1, 0, 8));
 
                 // Held piece display, to be owned by GameManager object
-                JPanel heldPieceContainer = new JPanel(new BorderLayout(0, 8));
-                JLabel heldPieceLabel = new JLabel("Held piece", JLabel.CENTER);
-                heldPieceContainer.add(heldPieceLabel, BorderLayout.NORTH);
-                PiecePanel heldPiecePanel = new PiecePanel();
-                heldPieceContainer.add(heldPiecePanel, BorderLayout.CENTER);
-                previews.add(heldPieceContainer);
+                PiecePanel heldPiecePanel = new PiecePanel("Hold");
+                previews.add(heldPiecePanel);
 
                 // Next piece display, to be owned by GameManager object
-                JPanel nextPieceContainer = new JPanel(new BorderLayout(0, 8));
-                JLabel nextPieceLabel = new JLabel("Next piece", JLabel.CENTER);
-                nextPieceContainer.add(nextPieceLabel, BorderLayout.NORTH);
-                PiecePanel nextPiecePanel = new PiecePanel();
-                nextPieceContainer.add(nextPiecePanel, BorderLayout.CENTER);
-                previews.add(nextPieceContainer);
+                PiecePanel nextPiecePanel = new PiecePanel("Next");
+                previews.add(nextPiecePanel);
                 sidePanel.add(previews, BorderLayout.CENTER);
 
                 HighScoreManager hsm = new HighScoreManager();

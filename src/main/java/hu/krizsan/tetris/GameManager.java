@@ -1,5 +1,6 @@
 package hu.krizsan.tetris;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -65,7 +66,7 @@ public class GameManager {
         softDropping = false;
         holdPiece = null;
         heldPiecePanel.setPiece(null);
-        holdAvailable = true;
+        setHoldAvailable(true);
         pieceBag.reset();
 
         nextPiece = new Piece(pieceBag.pop());
@@ -102,7 +103,7 @@ public class GameManager {
             return;
         }
 
-        holdAvailable = false;
+        setHoldAvailable(false);
 
         if (emptyHold) {
             nextPiece = new Piece(pieceBag.pop());
@@ -157,7 +158,7 @@ public class GameManager {
         rows_cleared += cleared;
 
         if (!holdAvailable) {
-            holdAvailable = true;
+            setHoldAvailable(true);
         }
 
         if (board.spawnPiece(nextPiece)) {
@@ -204,6 +205,11 @@ public class GameManager {
         if (timer.isRunning()) {
             timer.restart();
         }
+    }
+
+    private void setHoldAvailable(boolean available) {
+        holdAvailable = available;
+        heldPiecePanel.setLabelColor(available ? Color.WHITE : Color.RED);
     }
 
     private void updateScoreLabel() {
