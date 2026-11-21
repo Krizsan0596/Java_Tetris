@@ -14,6 +14,10 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
 public class Main {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(Main::createWindow);
+    }
+
     public static void createWindow() {
             try {
                 JFrame frame = new JFrame("Tetris");
@@ -69,9 +73,5 @@ public class Main {
             } catch (ClassNotFoundException | IOException | ClassCastException e) {
                 e.printStackTrace();
             }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::createWindow);
     }
 }

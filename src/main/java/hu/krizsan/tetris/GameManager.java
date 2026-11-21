@@ -48,17 +48,6 @@ public class GameManager {
         keybindsSetup();
     }
 
-    private void setTimerDelay(int delay) {
-        if (timer.getDelay() == delay) {
-            return;
-        }
-        timer.setDelay(delay);
-        timer.setInitialDelay(delay);
-        if (timer.isRunning()) {
-            timer.restart();
-        }
-    }
-
     public void start() {
         lockTimer.stop();
         timer.setDelay(calculateFallTime(1));
@@ -89,17 +78,6 @@ public class GameManager {
         updateScoreLabel();
     }
 
-    private void updateScoreLabel() {
-        scoreLabel.setText("Score: " + score);
-    }
-
-    private void resumeFallingIfUnsupported() {
-        if (lockTimer.isRunning() && !board.hasCollision(0, 1)) {
-            lockTimer.stop();
-            timer.start();
-        }
-    }
-
     public boolean isRunning() {
         return running;
     }
@@ -107,11 +85,6 @@ public class GameManager {
     public int calculateFallTime(int level) {
         double seconds = Math.pow(0.8 - ((level - 1) * 0.007), level - 1);
         return (int) Math.round(seconds * 1000);
-    }
-
-    private int calculateTimerDelay() {
-        int delay = calculateFallTime(rows_cleared / 10 + 1);
-        return softDropping ? Math.max(1, delay / 20) : delay;
     }
 
     public void updateTimer() {
@@ -173,6 +146,33 @@ public class GameManager {
 
         Score highScore = new Score(name, score);
         highScoreManager.add(highScore);
+    }
+
+    private void setTimerDelay(int delay) {
+        if (timer.getDelay() == delay) {
+            return;
+        }
+        timer.setDelay(delay);
+        timer.setInitialDelay(delay);
+        if (timer.isRunning()) {
+            timer.restart();
+        }
+    }
+
+    private void updateScoreLabel() {
+        scoreLabel.setText("Score: " + score);
+    }
+
+    private void resumeFallingIfUnsupported() {
+        if (lockTimer.isRunning() && !board.hasCollision(0, 1)) {
+            lockTimer.stop();
+            timer.start();
+        }
+    }
+
+    private int calculateTimerDelay() {
+        int delay = calculateFallTime(rows_cleared / 10 + 1);
+        return softDropping ? Math.max(1, delay / 20) : delay;
     }
 
     private void keybindsSetup() {
