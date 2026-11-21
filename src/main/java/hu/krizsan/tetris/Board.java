@@ -29,7 +29,7 @@ public class Board {
         position.setLocation(0, 0);
     }
 
-    public boolean spawnPiece(Piece piece) {
+    public int lock() {
         if (currentPiece != null) {
             for (int[] offset : currentPiece.getOffsets()) {
                 int x = position.x + offset[0];
@@ -38,7 +38,10 @@ public class Board {
             }
             currentPiece = null;
         }
+        return 0;
+    }
 
+    public boolean spawnPiece(Piece piece) {
         int spawnY = 0;
         for (int[] offset : piece.getOffsets()) {
             spawnY = Math.max(spawnY, -offset[1]);

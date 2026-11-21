@@ -14,6 +14,7 @@ public class GameManager {
     private GamePanel gamePanel;
     private final Board board;
     private boolean running;
+    private int score;
     private final Timer timer;
 
     public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board) {
@@ -23,6 +24,59 @@ public class GameManager {
         this.timer = new Timer(calculateFallTime(1), e -> update());
 
         keybindsSetup();
+    }
+
+    private void setTimerDelay(int delay) {
+        if (timer.getDelay() == delay) {
+            return;
+        }
+        timer.setDelay(delay);
+        timer.setInitialDelay(delay);
+        if (timer.isRunning()) {
+            timer.restart();
+        }
+    }
+
+    public void start() {
+        timer.setDelay(calculateFallTime(1));
+        timer.setInitialDelay(calculateFallTime(1));
+        board.reset();
+        score = 0;
+        pieceBag.reset();
+        nextPiece = new Piece(pieceBag.pop());
+        running = true;
+        newPiece();
+    }
+
+    public void update() {
+        if (!board.down()) {
+            // TODO: Lock delay
+            newPiece();
+        }
+        gamePanel.repaint();
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public int calculateFallTime(int level) {
+        double seconds = Math.pow(0.8 - ((level - 1) * 0.007), level - 1);
+        return (int) Math.round(seconds * 1000);
+    }
+
+    public void newPiece() {
+        score += board.lock();
+        if (board.spawnPiece(nextPiece)) {
+            timer.restart();
+            gamePanel.repaint();
+            nextPiece = new Piece(pieceBag.pop());
+            nextPiecePanel.setPiece(nextPiece);
+        } else {
+            running = false;
+            timer.stop();
+            gamePanel.repaint();
+        }
     }
 
     private void keybindsSetup() {
@@ -83,51 +137,5 @@ public class GameManager {
                 newPiece();
             }
         });
-    }
-
-    private void setTimerDelay(int delay) {
-        if (timer.getDelay() == delay) {
-            return;
-        }
-        timer.setDelay(delay);
-        timer.setInitialDelay(delay);
-        if (timer.isRunning()) {
-            timer.restart();
-        }
-    }
-
-    public void start() {
-        timer.setDelay(calculateFallTime(1));
-        timer.setInitialDelay(calculateFallTime(1));
-        board.reset();
-        pieceBag.reset();
-        nextPiece = new Piece(pieceBag.pop());
-        running = true;
-        newPiece();
-    }
-
-    public void update() {
-        board.down();
-        gamePanel.repaint();
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-
-    public int calculateFallTime(int level) {
-        double seconds = Math.pow(0.8 - ((level - 1) * 0.007), level - 1);
-        return (int) Math.round(seconds * 1000);
-    }
-
-    public void newPiece() {
-        if (board.spawnPiece(nextPiece)) {
-            timer.restart();
-            gamePanel.repaint();
-            nextPiece = new Piece(pieceBag.pop());
-            nextPiecePanel.setPiece(nextPiece);
-        } else {
-            running = false;
-        }
     }
 }
