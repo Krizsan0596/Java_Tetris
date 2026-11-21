@@ -17,6 +17,7 @@ public class GameManager {
     private final JLabel scoreLabel;
     private boolean running;
     private boolean softDropping;
+    private boolean lastTetris;
     private final Timer timer;
     private int rows_cleared = 0;
     private int combo = -1;
@@ -51,6 +52,7 @@ public class GameManager {
         board.reset();
         score = 0;
         rows_cleared = 0;
+        lastTetris = false;
         updateScoreLabel();
         softDropping = false;
         pieceBag.reset();
@@ -85,8 +87,13 @@ public class GameManager {
         return (int) Math.round(seconds * 1000);
     }
 
-    public void updateTimer() {
+    private int calculateTimerDelay() {
         int delay = calculateFallTime(rows_cleared / 10 + 1);
+        return softDropping ? Math.max(1, delay / 20) : delay;
+    }
+
+    public void updateTimer() {
+        int delay = calculateTimerDelay();
         timer.setDelay(delay);
         timer.setInitialDelay(delay);
         timer.restart();
@@ -102,6 +109,12 @@ public class GameManager {
             score += (rows_cleared / 10 + 1) * combo * 50;
         }
         score += (rows_cleared / 10 + 1) * scores[cleared];
+        if (cleared == 4 && lastTetris) {
+            score += (rows_cleared / 10 + 1) * scores[cleared] / 2;
+        }
+        if (cleared > 0) {
+            lastTetris = cleared == 4;
+        }
         updateScoreLabel();
         rows_cleared += cleared;
         if (board.spawnPiece(nextPiece)) {
@@ -157,14 +170,14 @@ public class GameManager {
             @Override
             public void actionPerformed(ActionEvent e) {
                 softDropping = true;
-                setTimerDelay(Math.max(1, calculateFallTime(1) / 20));
+                setTimerDelay(calculateTimerDelay());
             }
         });
         gamePanel.getGameActionMap().put("slowDown", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 softDropping = false;
-                setTimerDelay(calculateFallTime(1));
+                setTimerDelay(calculateTimerDelay());
             }
         });
         gamePanel.getGameActionMap().put("hardDrop", new AbstractAction() {
