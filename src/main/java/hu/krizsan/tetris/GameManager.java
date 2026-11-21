@@ -38,10 +38,7 @@ public class GameManager {
         this.scoreLabel = scoreLabel;
         this.highScoreManager = highScoreManager;
         this.timer = new Timer(calculateFallTime(1), e -> update());
-        this.lockTimer = new Timer(LOCK_DELAY, e -> {
-            newPiece();
-            resets = 0;
-        });
+        this.lockTimer = new Timer(LOCK_DELAY, e -> newPiece());
         this.lockTimer.setRepeats(false);
 
         keybindsSetup();
@@ -59,12 +56,12 @@ public class GameManager {
     }
 
     public void start() {
+        lockTimer.stop();
         timer.setDelay(calculateFallTime(1));
         timer.setInitialDelay(calculateFallTime(1));
         board.reset();
         score = 0;
         rows_cleared = 0;
-        resets = 0;
         lastTetris = false;
         updateScoreLabel();
         softDropping = false;
@@ -121,6 +118,8 @@ public class GameManager {
     }
 
     public void newPiece() {
+        lockTimer.stop();
+        resets = 0;
         board.lock();
         int cleared = board.clearRows();
         if (cleared == 0) {
@@ -152,6 +151,7 @@ public class GameManager {
     public void gameOver() {
         running = false;
         timer.stop();
+        lockTimer.stop();
         gamePanel.repaint();
 
         String name = "";
@@ -182,14 +182,16 @@ public class GameManager {
         gamePanel.getGameActionMap().put("cw", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (lockTimer.isRunning() && resets >= MAX_LOCK_RESETS) {
+                    return;
+                }
+                if (!board.cw()) {
+                    return;
+                }
                 if (lockTimer.isRunning()) {
-                    if (resets > MAX_LOCK_RESETS) {
-                        return;
-                    }
                     resets++;
                     lockTimer.restart();
                 }
-                board.cw();
                 resumeFallingIfUnsupported();
                 gamePanel.repaint();
             }
@@ -197,14 +199,16 @@ public class GameManager {
         gamePanel.getGameActionMap().put("ccw", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (lockTimer.isRunning() && resets >= MAX_LOCK_RESETS) {
+                    return;
+                }
+                if (!board.ccw()) {
+                    return;
+                }
                 if (lockTimer.isRunning()) {
-                    if (resets > MAX_LOCK_RESETS) {
-                        return;
-                    }
                     resets++;
                     lockTimer.restart();
                 }
-                board.ccw();
                 resumeFallingIfUnsupported();
                 gamePanel.repaint();
             }
@@ -212,14 +216,16 @@ public class GameManager {
         gamePanel.getGameActionMap().put("left", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (lockTimer.isRunning() && resets >= MAX_LOCK_RESETS) {
+                    return;
+                }
+                if (!board.left()) {
+                    return;
+                }
                 if (lockTimer.isRunning()) {
-                    if (resets > MAX_LOCK_RESETS) {
-                        return;
-                    }
                     resets++;
                     lockTimer.restart();
                 }
-                board.left();
                 resumeFallingIfUnsupported();
                 gamePanel.repaint();
             }
@@ -227,14 +233,16 @@ public class GameManager {
         gamePanel.getGameActionMap().put("right", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (lockTimer.isRunning() && resets >= MAX_LOCK_RESETS) {
+                    return;
+                }
+                if (!board.right()) {
+                    return;
+                }
                 if (lockTimer.isRunning()) {
-                    if (resets > MAX_LOCK_RESETS) {
-                        return;
-                    }
                     resets++;
                     lockTimer.restart();
                 }
-                board.right();
                 resumeFallingIfUnsupported();
                 gamePanel.repaint();
             }
