@@ -82,6 +82,7 @@ public class GameManager {
             }
         } else {
             lockTimer.start();
+            timer.stop();
         }
         gamePanel.repaint();
         updateScoreLabel();
@@ -89,6 +90,13 @@ public class GameManager {
 
     private void updateScoreLabel() {
         scoreLabel.setText("Score: " + score);
+    }
+
+    private void resumeFallingIfUnsupported() {
+        if (lockTimer.isRunning() && !board.hasCollision(0, 1)) {
+            lockTimer.stop();
+            timer.start();
+        }
     }
 
     public boolean isRunning() {
@@ -182,6 +190,7 @@ public class GameManager {
                     lockTimer.restart();
                 }
                 board.cw();
+                resumeFallingIfUnsupported();
                 gamePanel.repaint();
             }
         });
@@ -196,6 +205,7 @@ public class GameManager {
                     lockTimer.restart();
                 }
                 board.ccw();
+                resumeFallingIfUnsupported();
                 gamePanel.repaint();
             }
         });
@@ -210,6 +220,7 @@ public class GameManager {
                     lockTimer.restart();
                 }
                 board.left();
+                resumeFallingIfUnsupported();
                 gamePanel.repaint();
             }
         });
@@ -224,6 +235,7 @@ public class GameManager {
                     lockTimer.restart();
                 }
                 board.right();
+                resumeFallingIfUnsupported();
                 gamePanel.repaint();
             }
         });
