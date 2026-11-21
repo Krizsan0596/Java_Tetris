@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -23,16 +24,22 @@ public class Main {
                 // Main game display, to be owned by GameManager object
                 Board board = new Board();
                 GamePanel gamePanel = new GamePanel(board);
-                frame.add(gamePanel, BorderLayout.CENTER);
+                JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER);
+                JPanel gameContainer = new JPanel(new BorderLayout(0, 8));
+                gameContainer.add(scoreLabel, BorderLayout.NORTH);
+                gameContainer.add(gamePanel, BorderLayout.CENTER);
+                frame.add(gameContainer, BorderLayout.CENTER);
                 
-                JPanel sidePanel = new JPanel(new BorderLayout(5, 5));
+                JPanel sidePanel = new JPanel(new BorderLayout(5, 8));
                 sidePanel.setPreferredSize(new Dimension(170, 0));
 
                 // Next piece display, to be owned by GameManager object
+                JLabel nextPieceLabel = new JLabel("Next piece", JLabel.CENTER);
+                sidePanel.add(nextPieceLabel, BorderLayout.NORTH);
                 NextPiecePanel nextPiecePanel = new NextPiecePanel();
                 sidePanel.add(nextPiecePanel, BorderLayout.CENTER);
 
-                GameManager gameManager = new GameManager(nextPiecePanel, gamePanel, board);
+                GameManager gameManager = new GameManager(nextPiecePanel, gamePanel, board, scoreLabel);
                 gameManager.start();
 
                 JButton quitButton = new JButton("Quit");

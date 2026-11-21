@@ -23,9 +23,6 @@ public final class NextPiecePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.setColor(Color.WHITE);
-        g.drawString("Next piece", 10, 20);
-
         if (piece == null) {
             return;
         }

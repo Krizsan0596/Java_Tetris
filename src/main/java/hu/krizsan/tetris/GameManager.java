@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
@@ -13,6 +14,7 @@ public class GameManager {
     private NextPiecePanel nextPiecePanel;
     private GamePanel gamePanel;
     private final Board board;
+    private final JLabel scoreLabel;
     private boolean running;
     private boolean softDropping;
     private final Timer timer;
@@ -21,10 +23,11 @@ public class GameManager {
 
     private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
 
-    public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board) {
+    public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board, JLabel scoreLabel) {
         this.gamePanel = gamePanel;
         this.nextPiecePanel = nextPiecePanel;
         this.board = board;
+        this.scoreLabel = scoreLabel;
         this.timer = new Timer(calculateFallTime(1), e -> update());
 
         keybindsSetup();
@@ -46,6 +49,7 @@ public class GameManager {
         timer.setInitialDelay(calculateFallTime(1));
         board.reset();
         score = 0;
+        updateScoreLabel();
         softDropping = false;
         pieceBag.reset();
         nextPiece = new Piece(pieceBag.pop());
@@ -63,6 +67,11 @@ public class GameManager {
             newPiece();
         }
         gamePanel.repaint();
+        updateScoreLabel();
+    }
+
+    private void updateScoreLabel() {
+        scoreLabel.setText("Score: " + score);
     }
 
     public boolean isRunning() {
@@ -85,6 +94,7 @@ public class GameManager {
         board.lock();
         int cleared = board.clearRows();
         score += (rows_cleared / 10 + 1) * scores[cleared];
+        updateScoreLabel();
         rows_cleared += cleared;
         if (board.spawnPiece(nextPiece)) {
             updateTimer();
