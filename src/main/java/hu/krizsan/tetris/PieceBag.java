@@ -17,16 +17,16 @@ public class PieceBag {
         refill();
     }
 
-    private void refill() {
-        pieces.addAll(Arrays.asList(PieceType.values()));
-        Collections.shuffle(pieces);
-    }
-
     public PieceType pop() {
         PieceType piece = pieces.remove(0);
         if (pieces.isEmpty()) {
             refill();
         }
         return piece;
+    }
+
+    private void refill() {
+        pieces.addAll(Arrays.asList(PieceType.values()));
+        Collections.shuffle(pieces);
     }
 }

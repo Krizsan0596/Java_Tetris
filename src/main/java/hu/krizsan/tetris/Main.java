@@ -2,6 +2,7 @@ package hu.krizsan.tetris;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
@@ -14,6 +15,10 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
 public class Main {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(Main::createWindow);
+    }
+
     public static void createWindow() {
             try {
                 JFrame frame = new JFrame("Tetris");
@@ -33,14 +38,19 @@ public class Main {
                 JPanel sidePanel = new JPanel(new BorderLayout(5, 8));
                 sidePanel.setPreferredSize(new Dimension(170, 0));
 
+                JPanel previews = new JPanel(new GridLayout(2, 1, 0, 8));
+
+                // Held piece display, to be owned by GameManager object
+                PiecePanel heldPiecePanel = new PiecePanel("Hold");
+                previews.add(heldPiecePanel);
+
                 // Next piece display, to be owned by GameManager object
-                JLabel nextPieceLabel = new JLabel("Next piece", JLabel.CENTER);
-                sidePanel.add(nextPieceLabel, BorderLayout.NORTH);
-                NextPiecePanel nextPiecePanel = new NextPiecePanel();
-                sidePanel.add(nextPiecePanel, BorderLayout.CENTER);
+                PiecePanel nextPiecePanel = new PiecePanel("Next");
+                previews.add(nextPiecePanel);
+                sidePanel.add(previews, BorderLayout.CENTER);
 
                 HighScoreManager hsm = new HighScoreManager();
-                GameManager gameManager = new GameManager(nextPiecePanel, gamePanel, board, scoreLabel, hsm);
+                GameManager gameManager = new GameManager(nextPiecePanel, heldPiecePanel, gamePanel, board, scoreLabel, hsm);
                 gameManager.start();
 
                 JButton quitButton = new JButton("Quit");
@@ -69,9 +79,5 @@ public class Main {
             } catch (ClassNotFoundException | IOException | ClassCastException e) {
                 e.printStackTrace();
             }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::createWindow);
     }
 }

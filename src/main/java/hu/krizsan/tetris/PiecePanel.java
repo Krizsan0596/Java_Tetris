@@ -1,17 +1,28 @@
 package hu.krizsan.tetris;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public final class NextPiecePanel extends JPanel {
+public final class PiecePanel extends JPanel {
     private Piece piece;
+    private final JLabel label;
 
-    public NextPiecePanel() {
+    public PiecePanel(String title) {
+        setLayout(new BorderLayout());
         setPreferredSize(new Dimension(160, 180));
         setBackground(new Color(48, 52, 70));
+        label = new JLabel(title, JLabel.CENTER);
+        label.setForeground(Color.WHITE);
+        add(label, BorderLayout.NORTH);
+    }
+
+    public void setLabelColor(Color color) {
+        label.setForeground(color);
     }
 
     public void setPiece(Piece piece) {
