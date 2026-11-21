@@ -10,6 +10,8 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 public class GameManager {
+    private final int LOCK_DELAY = 500;
+    private final int MAX_LOCK_RESETS = 15;
     private final PieceBag pieceBag = new PieceBag();
     private Piece nextPiece = new Piece(pieceBag.pop());
     private NextPiecePanel nextPiecePanel;
@@ -24,6 +26,8 @@ public class GameManager {
     private int rows_cleared = 0;
     private int combo = -1;
     private int score = 0;
+    private final Timer lockTimer;
+    private int resets = 0;
 
     private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
 
@@ -34,6 +38,11 @@ public class GameManager {
         this.scoreLabel = scoreLabel;
         this.highScoreManager = highScoreManager;
         this.timer = new Timer(calculateFallTime(1), e -> update());
+        this.lockTimer = new Timer(LOCK_DELAY, e -> {
+            newPiece();
+            resets = 0;
+        });
+        this.lockTimer.setRepeats(false);
 
         keybindsSetup();
     }
@@ -55,6 +64,7 @@ public class GameManager {
         board.reset();
         score = 0;
         rows_cleared = 0;
+        resets = 0;
         lastTetris = false;
         updateScoreLabel();
         softDropping = false;
@@ -65,13 +75,13 @@ public class GameManager {
     }
 
     public void update() {
-        if (board.down()) {
+        if (!board.hasCollision(0, 1)) {
+            board.down();
             if (softDropping) {
                 score++;
             }
         } else {
-            // TODO: Lock delay
-            newPiece();
+            lockTimer.start();
         }
         gamePanel.repaint();
         updateScoreLabel();
@@ -164,6 +174,13 @@ public class GameManager {
         gamePanel.getGameActionMap().put("cw", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (lockTimer.isRunning()) {
+                    if (resets > MAX_LOCK_RESETS) {
+                        return;
+                    }
+                    resets++;
+                    lockTimer.restart();
+                }
                 board.cw();
                 gamePanel.repaint();
             }
@@ -171,6 +188,13 @@ public class GameManager {
         gamePanel.getGameActionMap().put("ccw", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (lockTimer.isRunning()) {
+                    if (resets > MAX_LOCK_RESETS) {
+                        return;
+                    }
+                    resets++;
+                    lockTimer.restart();
+                }
                 board.ccw();
                 gamePanel.repaint();
             }
@@ -178,6 +202,13 @@ public class GameManager {
         gamePanel.getGameActionMap().put("left", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (lockTimer.isRunning()) {
+                    if (resets > MAX_LOCK_RESETS) {
+                        return;
+                    }
+                    resets++;
+                    lockTimer.restart();
+                }
                 board.left();
                 gamePanel.repaint();
             }
@@ -185,6 +216,13 @@ public class GameManager {
         gamePanel.getGameActionMap().put("right", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (lockTimer.isRunning()) {
+                    if (resets > MAX_LOCK_RESETS) {
+                        return;
+                    }
+                    resets++;
+                    lockTimer.restart();
+                }
                 board.right();
                 gamePanel.repaint();
             }
