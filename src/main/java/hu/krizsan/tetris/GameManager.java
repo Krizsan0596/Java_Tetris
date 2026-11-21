@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
@@ -13,14 +14,22 @@ public class GameManager {
     private NextPiecePanel nextPiecePanel;
     private GamePanel gamePanel;
     private final Board board;
+    private final JLabel scoreLabel;
     private boolean running;
-    private int score = 0;
+    private boolean softDropping;
+    private boolean lastTetris;
     private final Timer timer;
+    private int rows_cleared = 0;
+    private int combo = -1;
+    private int score = 0;
 
-    public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board) {
+    private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
+
+    public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board, JLabel scoreLabel) {
         this.gamePanel = gamePanel;
         this.nextPiecePanel = nextPiecePanel;
         this.board = board;
+        this.scoreLabel = scoreLabel;
         this.timer = new Timer(calculateFallTime(1), e -> update());
 
         keybindsSetup();
@@ -42,6 +51,10 @@ public class GameManager {
         timer.setInitialDelay(calculateFallTime(1));
         board.reset();
         score = 0;
+        rows_cleared = 0;
+        lastTetris = false;
+        updateScoreLabel();
+        softDropping = false;
         pieceBag.reset();
         nextPiece = new Piece(pieceBag.pop());
         running = true;
@@ -49,11 +62,20 @@ public class GameManager {
     }
 
     public void update() {
-        if (!board.down()) {
+        if (board.down()) {
+            if (softDropping) {
+                score++;
+            }
+        } else {
             // TODO: Lock delay
             newPiece();
         }
         gamePanel.repaint();
+        updateScoreLabel();
+    }
+
+    private void updateScoreLabel() {
+        scoreLabel.setText("Score: " + score);
     }
 
     public boolean isRunning() {
@@ -65,11 +87,39 @@ public class GameManager {
         return (int) Math.round(seconds * 1000);
     }
 
+    private int calculateTimerDelay() {
+        int delay = calculateFallTime(rows_cleared / 10 + 1);
+        return softDropping ? Math.max(1, delay / 20) : delay;
+    }
+
+    public void updateTimer() {
+        int delay = calculateTimerDelay();
+        timer.setDelay(delay);
+        timer.setInitialDelay(delay);
+        timer.restart();
+    }
+
     public void newPiece() {
         board.lock();
-        board.clearRows();
+        int cleared = board.clearRows();
+        if (cleared == 0) {
+            combo = -1;
+        } else {
+            combo++;
+            score += (rows_cleared / 10 + 1) * combo * 50;
+        }
+        score += (rows_cleared / 10 + 1) * scores[cleared];
+        if (cleared == 4 && lastTetris) {
+            score += (rows_cleared / 10 + 1) * scores[cleared] / 2;
+        }
+        if (cleared > 0) {
+            lastTetris = cleared == 4;
+        }
+        updateScoreLabel();
+        rows_cleared += cleared;
         if (board.spawnPiece(nextPiece)) {
-            timer.restart();
+            updateTimer();
+
             gamePanel.repaint();
             nextPiece = new Piece(pieceBag.pop());
             nextPiecePanel.setPiece(nextPiece);
@@ -119,13 +169,15 @@ public class GameManager {
         gamePanel.getGameActionMap().put("speedUp", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setTimerDelay(Math.max(1, calculateFallTime(1) / 20));
+                softDropping = true;
+                setTimerDelay(calculateTimerDelay());
             }
         });
         gamePanel.getGameActionMap().put("slowDown", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setTimerDelay(calculateFallTime(1));
+                softDropping = false;
+                setTimerDelay(calculateTimerDelay());
             }
         });
         gamePanel.getGameActionMap().put("hardDrop", new AbstractAction() {
@@ -134,7 +186,7 @@ public class GameManager {
                 if (!running) {
                     return;
                 }
-                board.hardDrop();
+                score += 2 * board.hardDrop();
                 newPiece();
             }
         });
