@@ -61,6 +61,8 @@ public class GameManager {
         rows_cleared = 0;
         lastTetris = false;
         softDropping = false;
+        holdPiece = null;
+        holdAvailable = true;
         pieceBag.reset();
 
         nextPiece = new Piece(pieceBag.pop());
@@ -83,6 +85,10 @@ public class GameManager {
     }
 
     public void holdPiece() {
+        if (!running || !holdAvailable) {
+            return;
+        }
+
         boolean emptyHold = holdPiece == null;
         Piece pieceToSpawn = emptyHold ? nextPiece : holdPiece;
         holdPiece = board.getCurrentPiece();
@@ -91,6 +97,8 @@ public class GameManager {
             gameOver();
             return;
         }
+
+        holdAvailable = false;
 
         if (emptyHold) {
             nextPiece = new Piece(pieceBag.pop());
@@ -218,6 +226,14 @@ public class GameManager {
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "hardDrop");
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0), "cw");
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0), "ccw");
+        gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0), "hold");
+
+        gamePanel.getGameActionMap().put("hold", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                holdPiece();
+            }
+        });
 
         gamePanel.getGameActionMap().put("cw", new AbstractAction() {
             @Override
