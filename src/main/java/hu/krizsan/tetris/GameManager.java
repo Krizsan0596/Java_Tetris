@@ -15,8 +15,11 @@ public class GameManager {
     private final Board board;
     private boolean running;
     private boolean softDropping;
-    private int score = 0;
     private final Timer timer;
+    private int rows_cleared = 0;
+    private int score = 0;
+
+    private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
 
     public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board) {
         this.gamePanel = gamePanel;
@@ -71,11 +74,21 @@ public class GameManager {
         return (int) Math.round(seconds * 1000);
     }
 
+    public void updateTimer() {
+        int delay = calculateFallTime(rows_cleared / 10 + 1);
+        timer.setDelay(delay);
+        timer.setInitialDelay(delay);
+        timer.restart();
+    }
+
     public void newPiece() {
         board.lock();
-        board.clearRows();
+        int cleared = board.clearRows();
+        score += (rows_cleared / 10 + 1) * scores[cleared];
+        rows_cleared += cleared;
         if (board.spawnPiece(nextPiece)) {
-            timer.restart();
+            updateTimer();
+
             gamePanel.repaint();
             nextPiece = new Piece(pieceBag.pop());
             nextPiecePanel.setPiece(nextPiece);

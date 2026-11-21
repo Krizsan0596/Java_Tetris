@@ -113,6 +113,7 @@ public class Board {
     }
 
     private boolean rotate(Piece rotated) {
+        // TODO: Wallkicks
         if (hasCollision(rotated, 0, 0)) {
             return false;
         }
