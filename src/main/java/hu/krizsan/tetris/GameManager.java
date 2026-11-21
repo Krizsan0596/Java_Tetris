@@ -14,7 +14,7 @@ public class GameManager {
     private GamePanel gamePanel;
     private final Board board;
     private boolean running;
-    private int score;
+    private int score = 0;
     private final Timer timer;
 
     public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board) {
@@ -66,7 +66,8 @@ public class GameManager {
     }
 
     public void newPiece() {
-        score += board.lock();
+        board.lock();
+        board.clearRows();
         if (board.spawnPiece(nextPiece)) {
             timer.restart();
             gamePanel.repaint();

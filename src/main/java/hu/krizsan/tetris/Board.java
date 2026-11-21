@@ -9,7 +9,7 @@ public class Board {
     public static final int HEIGHT = 20;
     public static final Color BACKGROUND_COLOR = new Color(48, 52, 70);
 
-    private final Color[][] colors = new Color[WIDTH][HEIGHT];
+    private final Color[][] colors = new Color[HEIGHT][WIDTH];
     private Piece currentPiece;
     private final Point position = new Point();
 
@@ -22,23 +22,51 @@ public class Board {
     }
 
     public void reset() {
-        for (Color[] column : colors) {
-            Arrays.fill(column, BACKGROUND_COLOR);
+        for (Color[] row : colors) {
+            Arrays.fill(row, BACKGROUND_COLOR);
         }
         currentPiece = null;
         position.setLocation(0, 0);
     }
 
-    public int lock() {
+    public void lock() {
         if (currentPiece != null) {
             for (int[] offset : currentPiece.getOffsets()) {
                 int x = position.x + offset[0];
                 int y = position.y + offset[1];
-                colors[x][y] = currentPiece.getColor();
+                colors[y][x] = currentPiece.getColor();
             }
             currentPiece = null;
         }
-        return 0;
+    }
+
+    private boolean rowClear(int index) {
+        for (Color block : colors[index]) {
+            if (BACKGROUND_COLOR.equals(block)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int clearRows() {
+        int writeRow = colors.length - 1;
+        int clearedRows = 0;
+
+        for (int readRow = colors.length - 1; readRow >= 0; readRow--) {
+            if (rowClear(readRow)) {
+                clearedRows++;
+            } else {
+                System.arraycopy(colors[readRow], 0, colors[writeRow], 0, WIDTH);
+                writeRow--;
+            }
+        }
+
+        for (int i = 0; i <= writeRow; i++) {
+            Arrays.fill(colors[i], BACKGROUND_COLOR);
+        }
+
+        return clearedRows;
     }
 
     public boolean spawnPiece(Piece piece) {
@@ -49,7 +77,7 @@ public class Board {
         for (int[] offset : piece.getOffsets()) {
             int x = WIDTH / 2 + offset[0];
             int y = spawnY + offset[1];
-            if (!BACKGROUND_COLOR.equals(colors[x][y])) {
+            if (!BACKGROUND_COLOR.equals(colors[y][x])) {
                 return false;
             }
         }
@@ -114,7 +142,7 @@ public class Board {
             int x = position.x + offset[0] + dx;
             int y = position.y + offset[1] + dy;
             if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT
-                    || !BACKGROUND_COLOR.equals(colors[x][y])) {
+                    || !BACKGROUND_COLOR.equals(colors[y][x])) {
                 return true;
             }
         }
@@ -132,9 +160,9 @@ public class Board {
     }
 
     public Color[][] renderPiece() {
-        Color[][] renderedColors = new Color[WIDTH][];
-        for (int x = 0; x < WIDTH; x++) {
-            renderedColors[x] = colors[x].clone();
+        Color[][] renderedColors = new Color[HEIGHT][];
+        for (int y = 0; y < HEIGHT; y++) {
+            renderedColors[y] = colors[y].clone();
         }
 
         if (currentPiece == null) {
@@ -144,7 +172,7 @@ public class Board {
         for (int[] offset : currentPiece.getOffsets()) {
             int x = position.x + offset[0];
             int y = position.y + offset[1];
-            renderedColors[x][y] = currentPiece.getColor();
+            renderedColors[y][x] = currentPiece.getColor();
         }
         return renderedColors;
     }
