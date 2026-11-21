@@ -39,7 +39,8 @@ public class Main {
                 NextPiecePanel nextPiecePanel = new NextPiecePanel();
                 sidePanel.add(nextPiecePanel, BorderLayout.CENTER);
 
-                GameManager gameManager = new GameManager(nextPiecePanel, gamePanel, board, scoreLabel);
+                HighScoreManager hsm = new HighScoreManager();
+                GameManager gameManager = new GameManager(nextPiecePanel, gamePanel, board, scoreLabel, hsm);
                 gameManager.start();
 
                 JButton quitButton = new JButton("Quit");
@@ -54,7 +55,6 @@ public class Main {
                 frame.add(sidePanel, BorderLayout.EAST);
 
                 // HighScoreTable
-                HighScoreManager hsm = new HighScoreManager();
                 JTable table = new JTable(hsm.getTable());
                 table.setFocusable(false);
 
@@ -66,9 +66,6 @@ public class Main {
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
 
-                hsm.add(new Score("Potato", 43));
-                hsm.add(new Score("Carrot", 20));
-                hsm.add(new Score("Cabbage", 33));
             } catch (ClassNotFoundException | IOException | ClassCastException e) {
                 e.printStackTrace();
             }
