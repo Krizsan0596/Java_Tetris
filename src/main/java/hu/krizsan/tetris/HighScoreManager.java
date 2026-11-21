@@ -6,8 +6,11 @@ import java.util.ListIterator;
 
 public final class HighScoreManager {
     private static final int MAX_SCORES = 10;
+
     private static FileManager fm = new FileManager();
+
     private final HighScoreTable hst;
+
     public LinkedList<Score> scores = new LinkedList<>();
 
     public HighScoreManager() throws ClassCastException, ClassNotFoundException, IOException {

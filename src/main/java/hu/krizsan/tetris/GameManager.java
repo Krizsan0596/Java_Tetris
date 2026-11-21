@@ -12,24 +12,28 @@ import javax.swing.Timer;
 public class GameManager {
     private final int LOCK_DELAY = 500;
     private final int MAX_LOCK_RESETS = 15;
-    private final PieceBag pieceBag = new PieceBag();
-    private Piece nextPiece = new Piece(pieceBag.pop());
+    private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
+
+    private final Board board;
     private NextPiecePanel nextPiecePanel;
     private GamePanel gamePanel;
-    private final Board board;
     private final JLabel scoreLabel;
     private final HighScoreManager highScoreManager;
+
+    private final Timer timer;
+    private final Timer lockTimer;
+
+    private final PieceBag pieceBag = new PieceBag();
+    private Piece nextPiece = new Piece(pieceBag.pop());
+
     private boolean running;
     private boolean softDropping;
-    private boolean lastTetris;
-    private final Timer timer;
-    private int rows_cleared = 0;
-    private int combo = -1;
-    private int score = 0;
-    private final Timer lockTimer;
     private int resets = 0;
 
-    private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
+    private int score = 0;
+    private int rows_cleared = 0;
+    private boolean lastTetris;
+    private int combo = -1;
 
     public GameManager(NextPiecePanel nextPiecePanel, GamePanel gamePanel, Board board, JLabel scoreLabel, HighScoreManager highScoreManager) {
         this.gamePanel = gamePanel;
@@ -42,17 +46,6 @@ public class GameManager {
         this.lockTimer.setRepeats(false);
 
         keybindsSetup();
-    }
-
-    private void setTimerDelay(int delay) {
-        if (timer.getDelay() == delay) {
-            return;
-        }
-        timer.setDelay(delay);
-        timer.setInitialDelay(delay);
-        if (timer.isRunning()) {
-            timer.restart();
-        }
     }
 
     public void start() {
@@ -85,17 +78,6 @@ public class GameManager {
         updateScoreLabel();
     }
 
-    private void updateScoreLabel() {
-        scoreLabel.setText("Score: " + score);
-    }
-
-    private void resumeFallingIfUnsupported() {
-        if (lockTimer.isRunning() && !board.hasCollision(0, 1)) {
-            lockTimer.stop();
-            timer.start();
-        }
-    }
-
     public boolean isRunning() {
         return running;
     }
@@ -103,11 +85,6 @@ public class GameManager {
     public int calculateFallTime(int level) {
         double seconds = Math.pow(0.8 - ((level - 1) * 0.007), level - 1);
         return (int) Math.round(seconds * 1000);
-    }
-
-    private int calculateTimerDelay() {
-        int delay = calculateFallTime(rows_cleared / 10 + 1);
-        return softDropping ? Math.max(1, delay / 20) : delay;
     }
 
     public void updateTimer() {
@@ -169,6 +146,33 @@ public class GameManager {
 
         Score highScore = new Score(name, score);
         highScoreManager.add(highScore);
+    }
+
+    private void setTimerDelay(int delay) {
+        if (timer.getDelay() == delay) {
+            return;
+        }
+        timer.setDelay(delay);
+        timer.setInitialDelay(delay);
+        if (timer.isRunning()) {
+            timer.restart();
+        }
+    }
+
+    private void updateScoreLabel() {
+        scoreLabel.setText("Score: " + score);
+    }
+
+    private void resumeFallingIfUnsupported() {
+        if (lockTimer.isRunning() && !board.hasCollision(0, 1)) {
+            lockTimer.stop();
+            timer.start();
+        }
+    }
+
+    private int calculateTimerDelay() {
+        int delay = calculateFallTime(rows_cleared / 10 + 1);
+        return softDropping ? Math.max(1, delay / 20) : delay;
     }
 
     private void keybindsSetup() {

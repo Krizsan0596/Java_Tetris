@@ -10,6 +10,7 @@ public class Board {
     public static final Color BACKGROUND_COLOR = new Color(48, 52, 70);
 
     private final Color[][] colors = new Color[HEIGHT][WIDTH];
+
     private Piece currentPiece;
     private final Point position = new Point();
 
@@ -38,15 +39,6 @@ public class Board {
             }
             currentPiece = null;
         }
-    }
-
-    private boolean rowClear(int index) {
-        for (Color block : colors[index]) {
-            if (BACKGROUND_COLOR.equals(block)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public int clearRows() {
@@ -112,43 +104,8 @@ public class Board {
         return rotate(currentPiece.ccw());
     }
 
-    private boolean rotate(Piece rotated) {
-        // TODO: Wallkicks
-        if (hasCollision(rotated, 0, 0)) {
-            return false;
-        }
-        currentPiece = rotated;
-        return true;
-    }
-
-    private boolean shift(int dx, int dy) {
-        if (currentPiece == null) {
-            return false;
-        }
-
-        if (hasCollision(dx, dy)) {
-            return false;
-        }
-
-        position.translate(dx, dy);
-        return true;
-    }
-
     public boolean hasCollision(int dx, int dy) {
         return hasCollision(currentPiece, dx, dy);
-    }
-
-    private boolean hasCollision(Piece piece, int dx, int dy) {
-        for (int[] offset : piece.getOffsets()) {
-            int x = position.x + offset[0] + dx;
-            int y = position.y + offset[1] + dy;
-            if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT
-                    || !BACKGROUND_COLOR.equals(colors[y][x])) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public int hardDrop() {
@@ -177,5 +134,49 @@ public class Board {
             renderedColors[y][x] = currentPiece.getColor();
         }
         return renderedColors;
+    }
+
+    private boolean rowClear(int index) {
+        for (Color block : colors[index]) {
+            if (BACKGROUND_COLOR.equals(block)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean rotate(Piece rotated) {
+        // TODO: Wallkicks
+        if (hasCollision(rotated, 0, 0)) {
+            return false;
+        }
+        currentPiece = rotated;
+        return true;
+    }
+
+    private boolean shift(int dx, int dy) {
+        if (currentPiece == null) {
+            return false;
+        }
+
+        if (hasCollision(dx, dy)) {
+            return false;
+        }
+
+        position.translate(dx, dy);
+        return true;
+    }
+
+    private boolean hasCollision(Piece piece, int dx, int dy) {
+        for (int[] offset : piece.getOffsets()) {
+            int x = position.x + offset[0] + dx;
+            int y = position.y + offset[1] + dy;
+            if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT
+                    || !BACKGROUND_COLOR.equals(colors[y][x])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
