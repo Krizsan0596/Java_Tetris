@@ -17,6 +17,10 @@ public class Board {
         reset();
     }
 
+    public PieceType getCurrentPiece() {
+        return currentPiece;
+    }
+
     public void reset() {
         for (Color[] column : colors) {
             Arrays.fill(column, BACKGROUND_COLOR);
@@ -68,17 +72,34 @@ public class Board {
             return false;
         }
 
+        if (hasCollision(dx, dy)) {
+            return false;
+        }
+
+        position.translate(dx, dy);
+        return true;
+    }
+
+    public boolean hasCollision(int dx, int dy) {
         for (int[] offset : currentPiece.getOffsets()) {
             int x = position.x + offset[0] + dx;
             int y = position.y + offset[1] + dy;
             if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT
                     || !BACKGROUND_COLOR.equals(colors[x][y])) {
-                return false;
+                return true;
             }
         }
 
-        position.translate(dx, dy);
-        return true;
+        return false;
+    }
+
+    public void hardDrop() {
+        int distance = 0;
+
+        while (!hasCollision(0, distance + 1)) {
+            distance++;
+        }
+        shift(0, distance);
     }
 
     public Color[][] renderPiece() {
@@ -97,9 +118,5 @@ public class Board {
             renderedColors[x][y] = currentPiece.getColor();
         }
         return renderedColors;
-    }
-
-    public PieceType getCurrentPiece() {
-        return currentPiece;
     }
 }

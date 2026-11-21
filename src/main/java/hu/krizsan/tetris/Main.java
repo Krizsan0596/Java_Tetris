@@ -36,6 +36,7 @@ public class Main {
                 gameManager.start();
 
                 JButton quitButton = new JButton("Quit");
+                quitButton.setFocusable(false);
                 quitButton.addActionListener(event -> 
                         frame.dispatchEvent(
                             new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)
@@ -48,6 +49,7 @@ public class Main {
                 // HighScoreTable
                 HighScoreManager hsm = new HighScoreManager();
                 JTable table = new JTable(hsm.getTable());
+                table.setFocusable(false);
 
                 JScrollPane scrollPane = new JScrollPane(table);
                 scrollPane.setPreferredSize(new Dimension(0, 150));

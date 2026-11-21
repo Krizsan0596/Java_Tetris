@@ -30,6 +30,7 @@ public class GameManager {
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "right");
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "speedUp");
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), "slowDown");
+        gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "hardDrop");
         gamePanel.getGameActionMap().put("left", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,6 +55,16 @@ public class GameManager {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setTimerDelay(calculateFallTime(1));
+            }
+        });
+        gamePanel.getGameActionMap().put("hardDrop", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!running) {
+                    return;
+                }
+                board.hardDrop();
+                newPiece();
             }
         });
     }
