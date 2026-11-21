@@ -42,7 +42,7 @@ public final class GamePanel extends JPanel {
         Color[][] colors = board.renderPiece();
         for (int x = 0; x < Board.WIDTH; x++) {
             for (int y = 0; y < Board.HEIGHT; y++) {
-                g.setColor(colors[x][y]);
+                g.setColor(colors[y][x]);
                 g.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
             }
         }
