@@ -22,8 +22,14 @@ public class GameManager {
         this.board = board;
         this.timer = new Timer(calculateFallTime(1), e -> update());
 
+        keybindsSetup();
+    }
+
+    private void keybindsSetup() {
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "left");
         gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "right");
+        gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "speedUp");
+        gamePanel.getGameInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), "slowDown");
         gamePanel.getGameActionMap().put("left", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -38,6 +44,29 @@ public class GameManager {
                 gamePanel.repaint();
             }
         });
+        gamePanel.getGameActionMap().put("speedUp", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setTimerDelay(Math.max(1, calculateFallTime(1) / 20));
+            }
+        });
+        gamePanel.getGameActionMap().put("slowDown", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setTimerDelay(calculateFallTime(1));
+            }
+        });
+    }
+
+    private void setTimerDelay(int delay) {
+        if (timer.getDelay() == delay) {
+            return;
+        }
+        timer.setDelay(delay);
+        timer.setInitialDelay(delay);
+        if (timer.isRunning()) {
+            timer.restart();
+        }
     }
 
     public void start() {
