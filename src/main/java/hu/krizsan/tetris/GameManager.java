@@ -134,7 +134,7 @@ public class GameManager {
                 if (!running) {
                     return;
                 }
-                board.hardDrop();
+                score += 2 * board.hardDrop();
                 newPiece();
             }
         });

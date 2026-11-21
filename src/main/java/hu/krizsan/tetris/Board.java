@@ -150,13 +150,14 @@ public class Board {
         return false;
     }
 
-    public void hardDrop() {
+    public int hardDrop() {
         int distance = 0;
 
         while (!hasCollision(0, distance + 1)) {
             distance++;
         }
         shift(0, distance);
+        return distance;
     }
 
     public Color[][] renderPiece() {
