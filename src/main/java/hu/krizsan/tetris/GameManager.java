@@ -19,6 +19,7 @@ public class GameManager {
     private boolean softDropping;
     private final Timer timer;
     private int rows_cleared = 0;
+    private int combo = -1;
     private int score = 0;
 
     private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
@@ -49,6 +50,7 @@ public class GameManager {
         timer.setInitialDelay(calculateFallTime(1));
         board.reset();
         score = 0;
+        rows_cleared = 0;
         updateScoreLabel();
         softDropping = false;
         pieceBag.reset();
@@ -93,6 +95,12 @@ public class GameManager {
     public void newPiece() {
         board.lock();
         int cleared = board.clearRows();
+        if (cleared == 0) {
+            combo = -1;
+        } else {
+            combo++;
+            score += (rows_cleared / 10 + 1) * combo * 50;
+        }
         score += (rows_cleared / 10 + 1) * scores[cleared];
         updateScoreLabel();
         rows_cleared += cleared;
