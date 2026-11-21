@@ -137,13 +137,16 @@ public class GameManager {
         gamePanel.repaint();
 
         String name = "";
-        while (name == null || name.isEmpty()) {
+        while (name.isEmpty()) {
             name = JOptionPane.showInputDialog(
                     gamePanel,
                     "Game over!\n Score: " + score + "\nEnter your name to save your score:",
                     "Game Over",
                     JOptionPane.QUESTION_MESSAGE
                     );
+            if (name == null) {
+                return;
+            }
         }
 
         Score highScore = new Score(name, score);

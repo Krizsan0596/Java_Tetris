@@ -6,7 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedList;
+
+import javax.swing.JOptionPane;
 
 public class FileManager {
     private static final String filename = "scores.sav";
@@ -17,6 +21,11 @@ public class FileManager {
             out.writeObject(scores);
         } catch (Exception e) {
             System.out.println("Error during file write: " + e.getMessage());
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Could not save high scores.\n" + e.getMessage(),
+                    "Save Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -44,14 +53,25 @@ public class FileManager {
 
             System.out.println("Scores loaded!");
             return scores;
-        } catch (ClassCastException | ClassNotFoundException e) {
-            System.out.println("Malformed save file.");
-            throw e;
-        } catch (FileNotFoundException e) {
-            System.out.println("No saved data found.");
-            return new LinkedList<>();
-        } catch (Exception e) {
+        } catch (IOException | ClassNotFoundException | ClassCastException e) {
+            if (e instanceof FileNotFoundException && Files.notExists(Path.of(filename))) {
+                System.out.println("No saved data found.");
+                return new LinkedList<>();
+            }
+
             System.out.println("Error during file read: " + e.getMessage());
+            int choice = JOptionPane.showConfirmDialog(
+                    null,
+                    "Could not load high scores.\n" + e.getMessage()
+                            + "\nOverwrite the save with an empty leaderboard?\nExisting scores will be lost.",
+                    "Load Error",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            if (choice == JOptionPane.YES_OPTION) {
+                LinkedList<Score> scores = new LinkedList<>();
+                save(scores);
+                return scores;
+            }
             throw e;
         }
     }
