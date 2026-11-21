@@ -14,6 +14,7 @@ public class GameManager {
     private GamePanel gamePanel;
     private final Board board;
     private boolean running;
+    private boolean softDropping;
     private int score = 0;
     private final Timer timer;
 
@@ -42,6 +43,7 @@ public class GameManager {
         timer.setInitialDelay(calculateFallTime(1));
         board.reset();
         score = 0;
+        softDropping = false;
         pieceBag.reset();
         nextPiece = new Piece(pieceBag.pop());
         running = true;
@@ -49,7 +51,11 @@ public class GameManager {
     }
 
     public void update() {
-        if (!board.down()) {
+        if (board.down()) {
+            if (softDropping) {
+                score++;
+            }
+        } else {
             // TODO: Lock delay
             newPiece();
         }
@@ -119,12 +125,14 @@ public class GameManager {
         gamePanel.getGameActionMap().put("speedUp", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                softDropping = true;
                 setTimerDelay(Math.max(1, calculateFallTime(1) / 20));
             }
         });
         gamePanel.getGameActionMap().put("slowDown", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                softDropping = false;
                 setTimerDelay(calculateFallTime(1));
             }
         });
