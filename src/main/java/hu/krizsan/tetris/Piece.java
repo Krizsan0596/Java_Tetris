@@ -48,6 +48,9 @@ public class Piece {
         for (int i = 0; i < offsets.length; i++) {
             rotated[i][0] = -offsets[i][1];
             rotated[i][1] = offsets[i][0];
+            if (type == PieceType.I) {
+                rotated[i][1]--;
+            }
         }
         RotationState nextState = switch (rotationState) {
             case UP -> RotationState.RIGHT;
@@ -63,6 +66,9 @@ public class Piece {
         for (int i = 0; i < offsets.length; i++) {
             rotated[i][0] = offsets[i][1];
             rotated[i][1] = -offsets[i][0];
+            if (type == PieceType.I) {
+                rotated[i][0]++;
+            }
         }
         RotationState nextState = switch (rotationState) {
             case UP -> RotationState.LEFT;

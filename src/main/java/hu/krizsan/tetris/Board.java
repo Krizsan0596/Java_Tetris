@@ -188,8 +188,8 @@ public class Board {
     private boolean rotate(Piece rotated) {
         RotationChange change = new RotationChange(currentPiece.getRotationState(), rotated.getRotationState());
         for (Point offset : wallkicks.get(currentPiece.getType()).get(change)) {
-            if (!hasCollision(rotated, offset)) {
-                position.translate(offset.x, offset.y);
+            if (!hasCollision(rotated, offset.x, -offset.y)) {
+                position.translate(offset.x, -offset.y);
                 currentPiece = rotated;
                 return true;
             }
