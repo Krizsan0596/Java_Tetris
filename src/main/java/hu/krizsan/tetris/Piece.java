@@ -9,16 +9,22 @@ public class Piece {
 
     private final int[][] offsets;
     private final Color color;
+    private final PieceType type;
     private final RotationState rotationState;
 
     public Piece(PieceType type) {
-        this(type.getOffsets(), type.getColor(), RotationState.DOWN);
+        this(type.getOffsets(), type, RotationState.DOWN);
     }
 
-    private Piece(int[][] offsets, Color color, RotationState rotationState) {
+    private Piece(int[][] offsets, PieceType type, RotationState rotationState) {
         this.offsets = offsets;
-        this.color = color;
+        this.type = type;
+        this.color = type.getColor();
         this.rotationState = rotationState;
+    }
+
+    public PieceType getType() {
+        return type;
     }
 
     public RotationState getRotationState() {
@@ -49,7 +55,7 @@ public class Piece {
             case DOWN -> RotationState.LEFT;
             case LEFT -> RotationState.UP;
         };
-        return new Piece(rotated, color, nextState);
+        return new Piece(rotated, type, nextState);
     }
 
     public Piece ccw() {
@@ -64,6 +70,6 @@ public class Piece {
             case DOWN -> RotationState.RIGHT;
             case RIGHT -> RotationState.UP;
         };
-        return new Piece(rotated, color, nextState);
+        return new Piece(rotated, type, nextState);
     }
 }

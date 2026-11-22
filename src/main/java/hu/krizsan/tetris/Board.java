@@ -126,6 +126,10 @@ public class Board {
         return hasCollision(currentPiece, dx, dy);
     }
 
+    public boolean hasCollision(Point offset) {
+        return hasCollision(offset.x, offset.y);
+    }
+
     public int hardDrop() {
         int distance = calculateDropDistance();
         shift(0, distance);
@@ -182,12 +186,15 @@ public class Board {
     }
 
     private boolean rotate(Piece rotated) {
-        // TODO: Wallkicks
-        if (hasCollision(rotated, 0, 0)) {
-            return false;
+        RotationChange change = new RotationChange(currentPiece.getRotationState(), rotated.getRotationState());
+        for (Point offset : wallkicks.get(currentPiece.getType()).get(change)) {
+            if (!hasCollision(rotated, offset)) {
+                position.translate(offset.x, offset.y);
+                currentPiece = rotated;
+                return true;
+            }
         }
-        currentPiece = rotated;
-        return true;
+        return false;
     }
 
     private boolean shift(int dx, int dy) {
@@ -201,6 +208,10 @@ public class Board {
 
         position.translate(dx, dy);
         return true;
+    }
+
+    private boolean hasCollision(Piece piece, Point offset) {
+        return hasCollision(piece, offset.x, offset.y);
     }
 
     private boolean hasCollision(Piece piece, int dx, int dy) {
@@ -238,6 +249,25 @@ public class Board {
         for (PieceType type : new PieceType[] {PieceType.J, PieceType.L, PieceType.S, PieceType.T, PieceType.Z}) {
             wallkicks.put(type, standardKicks);
         }
+
+        wallkicks.put(PieceType.O, Map.of(
+            new RotationChange(RotationState.DOWN, RotationState.RIGHT),
+            new Point[] {new Point(0, 0)},
+            new RotationChange(RotationState.RIGHT, RotationState.DOWN),
+            new Point[] {new Point(0, 0)},
+            new RotationChange(RotationState.RIGHT, RotationState.UP),
+            new Point[] {new Point(0, 0)},
+            new RotationChange(RotationState.UP, RotationState.RIGHT),
+            new Point[] {new Point(0, 0)},
+            new RotationChange(RotationState.UP, RotationState.LEFT),
+            new Point[] {new Point(0, 0)},
+            new RotationChange(RotationState.LEFT, RotationState.UP),
+            new Point[] {new Point(0, 0)},
+            new RotationChange(RotationState.LEFT, RotationState.DOWN),
+            new Point[] {new Point(0, 0)},
+            new RotationChange(RotationState.DOWN, RotationState.LEFT),
+            new Point[] {new Point(0, 0)}
+        ));
 
         wallkicks.put(PieceType.I, Map.of(
             new RotationChange(RotationState.DOWN, RotationState.RIGHT),
