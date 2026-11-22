@@ -8,6 +8,7 @@ public class Board {
     public static final int WIDTH = 10;
     public static final int HEIGHT = 20;
     public static final Color BACKGROUND_COLOR = new Color(48, 52, 70);
+    public static final double TRANSPARENCY = 0.7;
 
     private final Color[][] colors = new Color[HEIGHT][WIDTH];
 
@@ -20,6 +21,17 @@ public class Board {
 
     public Piece getCurrentPiece() {
         return currentPiece;
+    }
+
+    public static Color alphaBlend(Color color, double alpha) {
+        if (!Double.isFinite(alpha) || alpha < 0 || alpha > 1) {
+            throw new IllegalArgumentException("Alpha must be between 0 and 1.");
+        }
+
+        int red = (int) Math.round(color.getRed() * alpha + BACKGROUND_COLOR.getRed() * (1 - alpha));
+        int green = (int) Math.round(color.getGreen() * alpha + BACKGROUND_COLOR.getGreen() * (1 - alpha));
+        int blue = (int) Math.round(color.getBlue() * alpha + BACKGROUND_COLOR.getBlue() * (1 - alpha));
+        return new Color(red, green, blue);
     }
 
     public void reset() {
@@ -109,12 +121,17 @@ public class Board {
     }
 
     public int hardDrop() {
+        int distance = calculateDropDistance();
+        shift(0, distance);
+        return distance;
+    }
+
+    private int calculateDropDistance() {
         int distance = 0;
 
         while (!hasCollision(0, distance + 1)) {
             distance++;
         }
-        shift(0, distance);
         return distance;
     }
 
@@ -128,12 +145,25 @@ public class Board {
             return renderedColors;
         }
 
+        renderGhostPiece(renderedColors);
+
         for (int[] offset : currentPiece.getOffsets()) {
             int x = position.x + offset[0];
             int y = position.y + offset[1];
             renderedColors[y][x] = currentPiece.getColor();
         }
         return renderedColors;
+    }
+
+    private void renderGhostPiece(Color[][] renderedColors) {
+        int distance = calculateDropDistance();
+        Color ghostColor = alphaBlend(currentPiece.getColor(), 1 - TRANSPARENCY);
+
+        for (int[] offset : currentPiece.getOffsets()) {
+            int x = position.x + offset[0];
+            int y = position.y + offset[1] + distance;
+            renderedColors[y][x] = ghostColor;
+        }
     }
 
     private boolean rowClear(int index) {
