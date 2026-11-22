@@ -13,7 +13,6 @@ import javax.swing.Timer;
 public class GameManager {
     private final int LOCK_DELAY = 500;
     private final int MAX_LOCK_RESETS = 15;
-    private final int[] scores = {0, 100, 300, 500, 800}; // Clearing >4 lines should be impossible.
 
     private final Board board;
     private PiecePanel nextPiecePanel;
@@ -34,10 +33,7 @@ public class GameManager {
     private boolean holdAvailable = true;
     private int resets = 0;
 
-    private int score = 0;
-    private int rows_cleared = 0;
-    private boolean lastTetris;
-    private int combo = -1;
+    private final ScoreManager scoreManager = new ScoreManager();
 
     public GameManager(PiecePanel nextPiecePanel, PiecePanel heldPiecePanel, GamePanel gamePanel, Board board, JLabel scoreLabel, HighScoreManager highScoreManager) {
         this.gamePanel = gamePanel;
@@ -59,10 +55,8 @@ public class GameManager {
         timer.setDelay(calculateFallTime(1));
         timer.setInitialDelay(calculateFallTime(1));
         board.reset();
-        score = 0;
+        scoreManager.reset();
         updateScoreLabel();
-        rows_cleared = 0;
-        lastTetris = false;
         softDropping = false;
         holdPiece = null;
         heldPiecePanel.setPiece(null);
@@ -78,7 +72,7 @@ public class GameManager {
         if (!board.hasCollision(0, 1)) {
             board.down();
             if (softDropping) {
-                score++;
+                scoreManager.addSoftDrop();
             }
         } else {
             lockTimer.start();
@@ -137,25 +131,8 @@ public class GameManager {
         resets = 0;
         board.lock();
 
-        int cleared = board.clearRows();
-        if (cleared == 0) {
-            combo = -1;
-        } else {
-            combo++;
-            score += (rows_cleared / 10 + 1) * combo * 50;
-        }
-
-        score += (rows_cleared / 10 + 1) * scores[cleared];
-
-        if (cleared == 4 && lastTetris) {
-            score += (rows_cleared / 10 + 1) * scores[cleared] / 2;
-        }
-        if (cleared > 0) {
-            lastTetris = cleared == 4;
-        }
-
+        scoreManager.clearRows(board.clearRows());
         updateScoreLabel();
-        rows_cleared += cleared;
 
         if (!holdAvailable) {
             setHoldAvailable(true);
@@ -182,7 +159,7 @@ public class GameManager {
         while (name.isEmpty()) {
             name = JOptionPane.showInputDialog(
                     gamePanel,
-                    "Game over!\n Score: " + score + "\nEnter your name to save your score:",
+                    "Game over!\n Score: " + scoreManager.getScore() + "\nEnter your name to save your score:",
                     "Game Over",
                     JOptionPane.QUESTION_MESSAGE
                     );
@@ -191,7 +168,7 @@ public class GameManager {
             }
         }
 
-        Score highScore = new Score(name, score);
+        Score highScore = new Score(name, scoreManager.getScore());
         highScoreManager.add(highScore);
     }
 
@@ -213,7 +190,7 @@ public class GameManager {
     }
 
     private void updateScoreLabel() {
-        scoreLabel.setText("Score: " + score);
+        scoreLabel.setText("Score: " + scoreManager.getScore());
     }
 
     private void resumeFallingIfUnsupported() {
@@ -224,7 +201,7 @@ public class GameManager {
     }
 
     private int calculateTimerDelay() {
-        int delay = calculateFallTime(rows_cleared / 10 + 1);
+        int delay = calculateFallTime(scoreManager.getLevel());
         return softDropping ? Math.max(1, delay / 20) : delay;
     }
 
@@ -333,7 +310,7 @@ public class GameManager {
                 if (!running) {
                     return;
                 }
-                score += 2 * board.hardDrop();
+                scoreManager.addHardDrop(board.hardDrop());
                 newPiece();
             }
         });
