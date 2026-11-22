@@ -3,12 +3,17 @@ package hu.krizsan.tetris;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
+
+import hu.krizsan.tetris.Piece.RotationState;
 
 public class Board {
     public static final int WIDTH = 10;
     public static final int HEIGHT = 20;
     public static final Color BACKGROUND_COLOR = new Color(48, 52, 70);
-    public static final double TRANSPARENCY = 0.7;
+    private static final double TRANSPARENCY = 0.7;
+    private static final Map<PieceType, Map<RotationChange, Point[]>> wallkicks = new EnumMap<>(PieceType.class);
 
     private final Color[][] colors = new Color[HEIGHT][WIDTH];
 
@@ -16,6 +21,7 @@ public class Board {
     private final Point position = new Point();
 
     public Board() {
+        setupWallkicks();
         reset();
     }
 
@@ -208,5 +214,48 @@ public class Board {
         }
 
         return false;
+    }
+
+    private void setupWallkicks() {
+        Map<RotationChange, Point[]> standardKicks = Map.of(
+            new RotationChange(RotationState.DOWN, RotationState.RIGHT),
+            new Point[] {new Point(0, 0), new Point(-1, 0), new Point(-1, 1), new Point(0, -2), new Point(-1, -2)},
+            new RotationChange(RotationState.RIGHT, RotationState.DOWN),
+            new Point[] {new Point(0, 0), new Point(1, 0), new Point(1, -1), new Point(0, 2), new Point(1, 2)},
+            new RotationChange(RotationState.RIGHT, RotationState.UP),
+            new Point[] {new Point(0, 0), new Point(1, 0), new Point(1, -1), new Point(0, 2), new Point(1, 2)},
+            new RotationChange(RotationState.UP, RotationState.RIGHT),
+            new Point[] {new Point(0, 0), new Point(-1, 0), new Point(-1, 1), new Point(0, -2), new Point(-1, -2)},
+            new RotationChange(RotationState.UP, RotationState.LEFT),
+            new Point[] {new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(0, -2), new Point(1, -2)},
+            new RotationChange(RotationState.LEFT, RotationState.UP),
+            new Point[] {new Point(0, 0), new Point(-1, 0), new Point(-1, -1), new Point(0, 2), new Point(-1, 2)},
+            new RotationChange(RotationState.LEFT, RotationState.DOWN),
+            new Point[] {new Point(0, 0), new Point(-1, 0), new Point(-1, -1), new Point(0, 2), new Point(-1, 2)},
+            new RotationChange(RotationState.DOWN, RotationState.LEFT),
+            new Point[] {new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(0, -2), new Point(1, -2)}
+        );
+        for (PieceType type : new PieceType[] {PieceType.J, PieceType.L, PieceType.S, PieceType.T, PieceType.Z}) {
+            wallkicks.put(type, standardKicks);
+        }
+
+        wallkicks.put(PieceType.I, Map.of(
+            new RotationChange(RotationState.DOWN, RotationState.RIGHT),
+            new Point[] {new Point(0, 0), new Point(-2, 0), new Point(1, 0), new Point(-2, -1), new Point(1, 2)},
+            new RotationChange(RotationState.RIGHT, RotationState.DOWN),
+            new Point[] {new Point(0, 0), new Point(2, 0), new Point(-1, 0), new Point(2, 1), new Point(-1, -2)},
+            new RotationChange(RotationState.RIGHT, RotationState.UP),
+            new Point[] {new Point(0, 0), new Point(-1, 0), new Point(2, 0), new Point(-1, 2), new Point(2, -1)},
+            new RotationChange(RotationState.UP, RotationState.RIGHT),
+            new Point[] {new Point(0, 0), new Point(1, 0), new Point(-2, 0), new Point(1, -2), new Point(-2, 1)},
+            new RotationChange(RotationState.UP, RotationState.LEFT),
+            new Point[] {new Point(0, 0), new Point(2, 0), new Point(-1, 0), new Point(2, 1), new Point(-1, -2)},
+            new RotationChange(RotationState.LEFT, RotationState.UP),
+            new Point[] {new Point(0, 0), new Point(-2, 0), new Point(1, 0), new Point(-2, -1), new Point(1, 2)},
+            new RotationChange(RotationState.LEFT, RotationState.DOWN),
+            new Point[] {new Point(0, 0), new Point(1, 0), new Point(-2, 0), new Point(1, -2), new Point(-2, 1)},
+            new RotationChange(RotationState.DOWN, RotationState.LEFT),
+            new Point[] {new Point(0, 0), new Point(-1, 0), new Point(2, 0), new Point(-1, 2), new Point(2, -1)}
+        ));
     }
 }
