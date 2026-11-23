@@ -22,6 +22,12 @@ public final class HighScoreManager {
         return hst;
     }
 
+    public void clear() {
+        scores.clear();
+        fm.save(scores);
+        hst.fireTableDataChanged();
+    }
+
     public boolean add(Score score) {
         ListIterator<Score> it = this.scores.listIterator();
         

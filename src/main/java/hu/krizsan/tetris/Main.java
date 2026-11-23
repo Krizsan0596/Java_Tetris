@@ -6,12 +6,13 @@ import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
 public class Main {
@@ -26,7 +27,22 @@ public class Main {
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setLayout(new BorderLayout(8, 8));
 
-                // Main game display, to be owned by GameManager object
+                JMenuBar menuBar = new JMenuBar();
+                JMenu gameMenu = new JMenu("Game");
+                JMenuItem startMenuItem = new JMenuItem("Start");
+                gameMenu.add(startMenuItem);
+                JMenuItem controlsMenuItem = new JMenuItem("Controls");
+                gameMenu.add(controlsMenuItem);
+                JMenuItem quitMenuItem = new JMenuItem("Quit");
+                quitMenuItem.addActionListener(event ->
+                        frame.dispatchEvent(
+                            new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)
+                        )
+                );
+                gameMenu.add(quitMenuItem);
+                menuBar.add(gameMenu);
+                frame.setJMenuBar(menuBar);
+
                 Board board = new Board();
                 GamePanel gamePanel = new GamePanel(board);
                 JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER);
@@ -40,37 +56,61 @@ public class Main {
 
                 JPanel previews = new JPanel(new GridLayout(2, 1, 0, 8));
 
-                // Held piece display, to be owned by GameManager object
                 PiecePanel heldPiecePanel = new PiecePanel("Hold");
                 previews.add(heldPiecePanel);
 
-                // Next piece display, to be owned by GameManager object
                 PiecePanel nextPiecePanel = new PiecePanel("Next");
                 previews.add(nextPiecePanel);
                 sidePanel.add(previews, BorderLayout.CENTER);
 
                 HighScoreManager hsm = new HighScoreManager();
                 GameManager gameManager = new GameManager(nextPiecePanel, heldPiecePanel, gamePanel, board, scoreLabel, hsm);
-                gameManager.start();
+                controlsMenuItem.addActionListener(event -> gameManager.withTimersPaused(() ->
+                        JOptionPane.showOptionDialog(
+                                frame,
+                                "Left: Move left\n"
+                                        + "Right: Move right\n"
+                                        + "Down (hold): Soft drop\n"
+                                        + "Space: Hard drop\n"
+                                        + "X: Rotate clockwise\n"
+                                        + "Z: Rotate counterclockwise\n"
+                                        + "C: Hold piece",
+                                "Controls",
+                                JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE,
+                                null,
+                                new String[] { "Close" },
+                                "Close"
+                        )));
+                LeaderboardDialog leaderboardDialog = new LeaderboardDialog(frame, hsm);
+                JMenu leaderboardMenu = new JMenu("Leaderboard");
+                JMenuItem viewMenuItem = new JMenuItem("View");
+                viewMenuItem.addActionListener(event -> gameManager.withTimersPaused(() -> {
+                    leaderboardDialog.setLocationRelativeTo(frame);
+                    leaderboardDialog.setVisible(true);
+                }));
+                leaderboardMenu.add(viewMenuItem);
+                JMenuItem clearMenuItem = new JMenuItem("Clear");
+                clearMenuItem.addActionListener(event -> gameManager.withTimersPaused(() -> {
+                    int choice = JOptionPane.showConfirmDialog(
+                            frame,
+                            "Clear all leaderboard scores?",
+                            "Clear Leaderboard",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+                    if (choice == JOptionPane.YES_OPTION) {
+                        hsm.clear();
+                    }
+                }));
+                leaderboardMenu.add(clearMenuItem);
+                menuBar.add(leaderboardMenu);
 
-                JButton quitButton = new JButton("Quit");
-                quitButton.setFocusable(false);
-                quitButton.addActionListener(event -> 
-                        frame.dispatchEvent(
-                            new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)
-                        )
-                );
+                startMenuItem.addActionListener(event -> {
+                    startMenuItem.setText("Restart");
+                    gameManager.start();
+                });
 
-                sidePanel.add(quitButton, BorderLayout.SOUTH);
                 frame.add(sidePanel, BorderLayout.EAST);
-
-                // HighScoreTable
-                JTable table = new JTable(hsm.getTable());
-                table.setFocusable(false);
-
-                JScrollPane scrollPane = new JScrollPane(table);
-                scrollPane.setPreferredSize(new Dimension(0, 150));
-                frame.add(scrollPane, BorderLayout.SOUTH);
 
                 frame.pack();
                 frame.setLocationRelativeTo(null);
@@ -80,4 +120,5 @@ public class Main {
                 e.printStackTrace();
             }
     }
+
 }
