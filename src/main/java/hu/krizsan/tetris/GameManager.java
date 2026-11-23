@@ -162,7 +162,8 @@ public class GameManager {
         resets = 0;
         board.lock();
 
-        scoreManager.clearRows(board.clearRows());
+        int cleared = board.clearRows();
+        scoreManager.clearRows(cleared, board.checkAllClear());
         updateScoreLabel();
 
         if (!holdAvailable) {

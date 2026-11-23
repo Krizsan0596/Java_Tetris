@@ -79,6 +79,17 @@ public class Board {
         return clearedRows;
     }
 
+    public boolean checkAllClear() {
+        for (Color[] row : colors) {
+            for (Color cell : row) {
+                if (!BACKGROUND_COLOR.equals(cell)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public boolean spawnPiece(Piece piece) {
         int spawnY = 0;
         for (int[] offset : piece.getOffsets()) {
