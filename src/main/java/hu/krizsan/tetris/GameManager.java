@@ -124,6 +124,8 @@ public class GameManager {
         timer.stop();
         lockTimer.stop();
         try {
+            softDropping = false;
+            setTimerDelay(calculateTimerDelay());
             action.run();
         } finally {
             if (running) {
