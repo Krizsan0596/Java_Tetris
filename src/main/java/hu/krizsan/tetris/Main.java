@@ -13,8 +13,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
 public class Main {
@@ -82,6 +80,29 @@ public class Main {
                 sidePanel.add(previews, BorderLayout.CENTER);
 
                 HighScoreManager hsm = new HighScoreManager();
+                LeaderboardDialog leaderboardDialog = new LeaderboardDialog(frame, hsm);
+                JMenu leaderboardMenu = new JMenu("Leaderboard");
+                JMenuItem viewMenuItem = new JMenuItem("View");
+                viewMenuItem.addActionListener(event -> {
+                    leaderboardDialog.setLocationRelativeTo(frame);
+                    leaderboardDialog.setVisible(true);
+                });
+                leaderboardMenu.add(viewMenuItem);
+                JMenuItem clearMenuItem = new JMenuItem("Clear");
+                clearMenuItem.addActionListener(event -> {
+                    int choice = JOptionPane.showConfirmDialog(
+                            frame,
+                            "Clear all leaderboard scores?",
+                            "Clear Leaderboard",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+                    if (choice == JOptionPane.YES_OPTION) {
+                        hsm.clear();
+                    }
+                });
+                leaderboardMenu.add(clearMenuItem);
+                menuBar.add(leaderboardMenu);
+
                 GameManager gameManager = new GameManager(nextPiecePanel, heldPiecePanel, gamePanel, board, scoreLabel, hsm);
                 startMenuItem.addActionListener(event -> {
                     startMenuItem.setText("Restart");
@@ -89,14 +110,6 @@ public class Main {
                 });
 
                 frame.add(sidePanel, BorderLayout.EAST);
-
-                // HighScoreTable
-                JTable table = new JTable(hsm.getTable());
-                table.setFocusable(false);
-
-                JScrollPane scrollPane = new JScrollPane(table);
-                scrollPane.setPreferredSize(new Dimension(0, 150));
-                frame.add(scrollPane, BorderLayout.SOUTH);
 
                 frame.pack();
                 frame.setLocationRelativeTo(null);
@@ -106,4 +119,5 @@ public class Main {
                 e.printStackTrace();
             }
     }
+
 }
