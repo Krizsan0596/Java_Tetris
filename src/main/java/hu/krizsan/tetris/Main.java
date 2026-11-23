@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -32,6 +33,24 @@ public class Main {
                 JMenu gameMenu = new JMenu("Game");
                 JMenuItem startMenuItem = new JMenuItem("Start");
                 gameMenu.add(startMenuItem);
+                JMenuItem controlsMenuItem = new JMenuItem("Controls");
+                controlsMenuItem.addActionListener(event -> JOptionPane.showOptionDialog(
+                        frame,
+                        "Left: Move left\n"
+                                + "Right: Move right\n"
+                                + "Down (hold): Soft drop\n"
+                                + "Space: Hard drop\n"
+                                + "X: Rotate clockwise\n"
+                                + "Z: Rotate counterclockwise\n"
+                                + "C: Hold piece",
+                        "Controls",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        new String[] { "Close" },
+                        "Close"
+                ));
+                gameMenu.add(controlsMenuItem);
                 JMenuItem quitMenuItem = new JMenuItem("Quit");
                 quitMenuItem.addActionListener(event ->
                         frame.dispatchEvent(
@@ -64,7 +83,10 @@ public class Main {
 
                 HighScoreManager hsm = new HighScoreManager();
                 GameManager gameManager = new GameManager(nextPiecePanel, heldPiecePanel, gamePanel, board, scoreLabel, hsm);
-                startMenuItem.addActionListener(event -> gameManager.start());
+                startMenuItem.addActionListener(event -> {
+                    startMenuItem.setText("Restart");
+                    gameManager.start();
+                });
 
                 frame.add(sidePanel, BorderLayout.EAST);
 
