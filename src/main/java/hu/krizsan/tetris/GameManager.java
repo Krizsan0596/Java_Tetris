@@ -25,7 +25,7 @@ public class GameManager {
     private final Timer lockTimer;
 
     private final PieceBag pieceBag = new PieceBag();
-    private Piece nextPiece = new Piece(pieceBag.pop());
+    private Piece nextPiece;
     private Piece holdPiece = null;
 
     private boolean running;
@@ -51,6 +51,7 @@ public class GameManager {
     }
 
     public void start() {
+        timer.stop();
         lockTimer.stop();
         timer.setDelay(calculateFallTime(1));
         timer.setInitialDelay(calculateFallTime(1));
@@ -69,6 +70,9 @@ public class GameManager {
     }
 
     public void update() {
+        if (!running) {
+            return;
+        }
         if (!board.hasCollision(0, 1)) {
             board.down();
             if (softDropping) {
@@ -120,6 +124,9 @@ public class GameManager {
     }
 
     public void updateTimer() {
+        if (!running) {
+            return;
+        }
         int delay = calculateTimerDelay();
         timer.setDelay(delay);
         timer.setInitialDelay(delay);
@@ -127,6 +134,9 @@ public class GameManager {
     }
 
     public void newPiece() {
+        if (!running) {
+            return;
+        }
         lockTimer.stop();
         resets = 0;
         board.lock();
@@ -225,6 +235,9 @@ public class GameManager {
         gamePanel.getGameActionMap().put("cw", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!running) {
+                    return;
+                }
                 if (lockTimer.isRunning() && resets >= MAX_LOCK_RESETS) {
                     return;
                 }
@@ -242,6 +255,9 @@ public class GameManager {
         gamePanel.getGameActionMap().put("ccw", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!running) {
+                    return;
+                }
                 if (lockTimer.isRunning() && resets >= MAX_LOCK_RESETS) {
                     return;
                 }
@@ -259,6 +275,9 @@ public class GameManager {
         gamePanel.getGameActionMap().put("left", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!running) {
+                    return;
+                }
                 if (lockTimer.isRunning() && resets >= MAX_LOCK_RESETS) {
                     return;
                 }
@@ -276,6 +295,9 @@ public class GameManager {
         gamePanel.getGameActionMap().put("right", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!running) {
+                    return;
+                }
                 if (lockTimer.isRunning() && resets >= MAX_LOCK_RESETS) {
                     return;
                 }
@@ -293,6 +315,9 @@ public class GameManager {
         gamePanel.getGameActionMap().put("speedUp", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!running) {
+                    return;
+                }
                 softDropping = true;
                 setTimerDelay(calculateTimerDelay());
             }
@@ -300,6 +325,9 @@ public class GameManager {
         gamePanel.getGameActionMap().put("slowDown", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!running) {
+                    return;
+                }
                 softDropping = false;
                 setTimerDelay(calculateTimerDelay());
             }

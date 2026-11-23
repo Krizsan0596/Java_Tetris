@@ -30,6 +30,8 @@ public class Main {
 
                 JMenuBar menuBar = new JMenuBar();
                 JMenu gameMenu = new JMenu("Game");
+                JMenuItem startMenuItem = new JMenuItem("Start");
+                gameMenu.add(startMenuItem);
                 JMenuItem quitMenuItem = new JMenuItem("Quit");
                 quitMenuItem.addActionListener(event ->
                         frame.dispatchEvent(
@@ -62,7 +64,7 @@ public class Main {
 
                 HighScoreManager hsm = new HighScoreManager();
                 GameManager gameManager = new GameManager(nextPiecePanel, heldPiecePanel, gamePanel, board, scoreLabel, hsm);
-                gameManager.start();
+                startMenuItem.addActionListener(event -> gameManager.start());
 
                 frame.add(sidePanel, BorderLayout.EAST);
 
