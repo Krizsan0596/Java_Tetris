@@ -6,9 +6,11 @@ import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -26,7 +28,18 @@ public class Main {
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setLayout(new BorderLayout(8, 8));
 
-                // Main game display, to be owned by GameManager object
+                JMenuBar menuBar = new JMenuBar();
+                JMenu gameMenu = new JMenu("Game");
+                JMenuItem quitMenuItem = new JMenuItem("Quit");
+                quitMenuItem.addActionListener(event ->
+                        frame.dispatchEvent(
+                            new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)
+                        )
+                );
+                gameMenu.add(quitMenuItem);
+                menuBar.add(gameMenu);
+                frame.setJMenuBar(menuBar);
+
                 Board board = new Board();
                 GamePanel gamePanel = new GamePanel(board);
                 JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER);
@@ -40,11 +53,9 @@ public class Main {
 
                 JPanel previews = new JPanel(new GridLayout(2, 1, 0, 8));
 
-                // Held piece display, to be owned by GameManager object
                 PiecePanel heldPiecePanel = new PiecePanel("Hold");
                 previews.add(heldPiecePanel);
 
-                // Next piece display, to be owned by GameManager object
                 PiecePanel nextPiecePanel = new PiecePanel("Next");
                 previews.add(nextPiecePanel);
                 sidePanel.add(previews, BorderLayout.CENTER);
@@ -53,15 +64,6 @@ public class Main {
                 GameManager gameManager = new GameManager(nextPiecePanel, heldPiecePanel, gamePanel, board, scoreLabel, hsm);
                 gameManager.start();
 
-                JButton quitButton = new JButton("Quit");
-                quitButton.setFocusable(false);
-                quitButton.addActionListener(event -> 
-                        frame.dispatchEvent(
-                            new WindowEvent(frame, WindowEvent.WINDOW_CLOSING)
-                        )
-                );
-
-                sidePanel.add(quitButton, BorderLayout.SOUTH);
                 frame.add(sidePanel, BorderLayout.EAST);
 
                 // HighScoreTable
