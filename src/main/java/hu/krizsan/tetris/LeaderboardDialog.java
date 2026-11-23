@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class LeaderboardDialog extends JDialog {
     public LeaderboardDialog(JFrame owner, HighScoreManager hsm) {
-        super(owner, "Leaderboard", false);
+        super(owner, "Leaderboard", true);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
         JTable table = new JTable(hsm.getTable());

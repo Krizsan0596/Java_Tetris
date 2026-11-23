@@ -118,6 +118,25 @@ public class GameManager {
         return running;
     }
 
+    public void withTimersPaused(Runnable action) {
+        boolean gravityWasRunning = timer.isRunning();
+        boolean lockWasRunning = lockTimer.isRunning();
+        timer.stop();
+        lockTimer.stop();
+        try {
+            action.run();
+        } finally {
+            if (running) {
+                if (gravityWasRunning) {
+                    timer.start();
+                }
+                if (lockWasRunning) {
+                    lockTimer.start();
+                }
+            }
+        }
+    }
+
     public int calculateFallTime(int level) {
         double seconds = Math.pow(0.8 - ((level - 1) * 0.007), level - 1);
         return (int) Math.round(seconds * 1000);

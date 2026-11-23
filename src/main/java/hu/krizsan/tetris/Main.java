@@ -32,22 +32,6 @@ public class Main {
                 JMenuItem startMenuItem = new JMenuItem("Start");
                 gameMenu.add(startMenuItem);
                 JMenuItem controlsMenuItem = new JMenuItem("Controls");
-                controlsMenuItem.addActionListener(event -> JOptionPane.showOptionDialog(
-                        frame,
-                        "Left: Move left\n"
-                                + "Right: Move right\n"
-                                + "Down (hold): Soft drop\n"
-                                + "Space: Hard drop\n"
-                                + "X: Rotate clockwise\n"
-                                + "Z: Rotate counterclockwise\n"
-                                + "C: Hold piece",
-                        "Controls",
-                        JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE,
-                        null,
-                        new String[] { "Close" },
-                        "Close"
-                ));
                 gameMenu.add(controlsMenuItem);
                 JMenuItem quitMenuItem = new JMenuItem("Quit");
                 quitMenuItem.addActionListener(event ->
@@ -80,16 +64,34 @@ public class Main {
                 sidePanel.add(previews, BorderLayout.CENTER);
 
                 HighScoreManager hsm = new HighScoreManager();
+                GameManager gameManager = new GameManager(nextPiecePanel, heldPiecePanel, gamePanel, board, scoreLabel, hsm);
+                controlsMenuItem.addActionListener(event -> gameManager.withTimersPaused(() ->
+                        JOptionPane.showOptionDialog(
+                                frame,
+                                "Left: Move left\n"
+                                        + "Right: Move right\n"
+                                        + "Down (hold): Soft drop\n"
+                                        + "Space: Hard drop\n"
+                                        + "X: Rotate clockwise\n"
+                                        + "Z: Rotate counterclockwise\n"
+                                        + "C: Hold piece",
+                                "Controls",
+                                JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE,
+                                null,
+                                new String[] { "Close" },
+                                "Close"
+                        )));
                 LeaderboardDialog leaderboardDialog = new LeaderboardDialog(frame, hsm);
                 JMenu leaderboardMenu = new JMenu("Leaderboard");
                 JMenuItem viewMenuItem = new JMenuItem("View");
-                viewMenuItem.addActionListener(event -> {
+                viewMenuItem.addActionListener(event -> gameManager.withTimersPaused(() -> {
                     leaderboardDialog.setLocationRelativeTo(frame);
                     leaderboardDialog.setVisible(true);
-                });
+                }));
                 leaderboardMenu.add(viewMenuItem);
                 JMenuItem clearMenuItem = new JMenuItem("Clear");
-                clearMenuItem.addActionListener(event -> {
+                clearMenuItem.addActionListener(event -> gameManager.withTimersPaused(() -> {
                     int choice = JOptionPane.showConfirmDialog(
                             frame,
                             "Clear all leaderboard scores?",
@@ -99,11 +101,10 @@ public class Main {
                     if (choice == JOptionPane.YES_OPTION) {
                         hsm.clear();
                     }
-                });
+                }));
                 leaderboardMenu.add(clearMenuItem);
                 menuBar.add(leaderboardMenu);
 
-                GameManager gameManager = new GameManager(nextPiecePanel, heldPiecePanel, gamePanel, board, scoreLabel, hsm);
                 startMenuItem.addActionListener(event -> {
                     startMenuItem.setText("Restart");
                     gameManager.start();
