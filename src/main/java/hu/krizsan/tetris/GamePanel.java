@@ -20,7 +20,7 @@ public final class GamePanel extends JPanel {
         gameInputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
         gameActionMap = getActionMap();
         setPreferredSize(new Dimension(BLOCK_SIZE * Board.WIDTH, BLOCK_SIZE * Board.HEIGHT));
-        setBackground(Board.BACKGROUND_COLOR);
+        setBackground(Palette.BACKGROUND);
     }
 
     public Board getBoard() {

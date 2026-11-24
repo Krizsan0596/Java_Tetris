@@ -5,31 +5,31 @@ import java.awt.Color;
 public enum PieceType {
     I(new int[][] {
         {-1, 0}, {0, 0}, {1, 0}, {2, 0}
-    }, Color.CYAN),
+    }, Palette.I_PIECE),
 
     O(new int[][] {
         {0, 0}, {1, 0}, {0, 1}, {1, 1}
-    }, Color.YELLOW),
+    }, Palette.O_PIECE),
 
     T(new int[][] {
         {-1, 0}, {0, 0}, {1, 0}, {0, 1}
-    }, Color.MAGENTA),
+    }, Palette.T_PIECE),
 
     S(new int[][] {
         {0, 0}, {1, 0}, {-1, 1}, {0, 1}
-    }, Color.GREEN),
+    }, Palette.S_PIECE),
 
     Z(new int[][] {
         {-1, 0}, {0, 0}, {0, 1}, {1, 1}
-    }, Color.RED),
+    }, Palette.Z_PIECE),
 
     J(new int[][] {
         {-1, 0}, {0, 0}, {1, 0}, {-1, -1}
-    }, Color.BLUE),
+    }, Palette.J_PIECE),
 
     L(new int[][] {
         {-1, 0}, {0, 0}, {1, 0}, {1, -1}
-    }, Color.ORANGE);
+    }, Palette.L_PIECE);
 
     private final int[][] offsets;
     private final Color color;

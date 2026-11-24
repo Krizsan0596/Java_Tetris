@@ -11,7 +11,6 @@ import hu.krizsan.tetris.Piece.RotationState;
 public class Board {
     public static final int WIDTH = 10;
     public static final int HEIGHT = 20;
-    public static final Color BACKGROUND_COLOR = new Color(48, 52, 70);
     private static final double TRANSPARENCY = 0.7;
     private static final Map<PieceType, Map<RotationChange, Point[]>> wallkicks = new EnumMap<>(PieceType.class);
 
@@ -34,15 +33,15 @@ public class Board {
             throw new IllegalArgumentException("Alpha must be between 0 and 1.");
         }
 
-        int red = (int) Math.round(color.getRed() * alpha + BACKGROUND_COLOR.getRed() * (1 - alpha));
-        int green = (int) Math.round(color.getGreen() * alpha + BACKGROUND_COLOR.getGreen() * (1 - alpha));
-        int blue = (int) Math.round(color.getBlue() * alpha + BACKGROUND_COLOR.getBlue() * (1 - alpha));
+        int red = (int) Math.round(color.getRed() * alpha + Palette.BACKGROUND.getRed() * (1 - alpha));
+        int green = (int) Math.round(color.getGreen() * alpha + Palette.BACKGROUND.getGreen() * (1 - alpha));
+        int blue = (int) Math.round(color.getBlue() * alpha + Palette.BACKGROUND.getBlue() * (1 - alpha));
         return new Color(red, green, blue);
     }
 
     public void reset() {
         for (Color[] row : colors) {
-            Arrays.fill(row, BACKGROUND_COLOR);
+            Arrays.fill(row, Palette.BACKGROUND);
         }
         currentPiece = null;
         position.setLocation(0, 0);
@@ -73,7 +72,7 @@ public class Board {
         }
 
         for (int i = 0; i <= writeRow; i++) {
-            Arrays.fill(colors[i], BACKGROUND_COLOR);
+            Arrays.fill(colors[i], Palette.BACKGROUND);
         }
 
         return clearedRows;
@@ -82,7 +81,7 @@ public class Board {
     public boolean checkAllClear() {
         for (Color[] row : colors) {
             for (Color cell : row) {
-                if (!BACKGROUND_COLOR.equals(cell)) {
+                if (!Palette.BACKGROUND.equals(cell)) {
                     return false;
                 }
             }
@@ -98,7 +97,7 @@ public class Board {
         for (int[] offset : piece.getOffsets()) {
             int x = WIDTH / 2 + offset[0];
             int y = spawnY + offset[1];
-            if (!BACKGROUND_COLOR.equals(colors[y][x])) {
+            if (!Palette.BACKGROUND.equals(colors[y][x])) {
                 return false;
             }
         }
@@ -189,7 +188,7 @@ public class Board {
 
     private boolean rowClear(int index) {
         for (Color block : colors[index]) {
-            if (BACKGROUND_COLOR.equals(block)) {
+            if (Palette.BACKGROUND.equals(block)) {
                 return false;
             }
         }
@@ -230,7 +229,7 @@ public class Board {
             int x = position.x + offset[0] + dx;
             int y = position.y + offset[1] + dy;
             if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT
-                    || !BACKGROUND_COLOR.equals(colors[y][x])) {
+                    || !Palette.BACKGROUND.equals(colors[y][x])) {
                 return true;
             }
         }
