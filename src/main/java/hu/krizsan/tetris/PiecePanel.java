@@ -15,9 +15,9 @@ public final class PiecePanel extends JPanel {
     public PiecePanel(String title) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(160, 180));
-        setBackground(new Color(48, 52, 70));
+        setBackground(Palette.BACKGROUND);
         label = new JLabel(title, JLabel.CENTER);
-        label.setForeground(Color.WHITE);
+        label.setForeground(Palette.LABEL);
         add(label, BorderLayout.NORTH);
     }
 

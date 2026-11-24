@@ -1,6 +1,5 @@
 package hu.krizsan.tetris;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -218,7 +217,7 @@ public class GameManager {
 
     private void setHoldAvailable(boolean available) {
         holdAvailable = available;
-        heldPiecePanel.setLabelColor(available ? Color.WHITE : Color.RED);
+        heldPiecePanel.setLabelColor(available ? Palette.LABEL : Palette.HOLD_UNAVAILABLE);
     }
 
     private void updateScoreLabel() {
